@@ -69,12 +69,6 @@ export default function ProductList() {
         
         <form onSubmit={handleSearchSubmit} className="product-list__search-form">
 
-          <span className="product-list__search-category">
-            중고거래 <span>▼</span>
-          </span>
-          
-          <div className="product-list__search-divider"></div>
-          
           <input
             type="text"
             placeholder="검색어를 입력해주세요"

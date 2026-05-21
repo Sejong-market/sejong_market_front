@@ -30,25 +30,7 @@
 
 .product-list__search-form:focus-within {
   border-color: #9A1C1F; 
-  box-shadow: 0 0 0 1px #9A1C1F;
-}
-
-.product-list__search-category {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #000000;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.product-list__search-divider {
-  width: 1px;
-  height: 0.875rem;
-  background-color: #e5e7eb;
-  margin: 0 0.75rem;
-  flex-shrink: 0;
+  box-shadow: 0 0 0 0.1px #9A1C1F;
 }
 
 .product-list__search-input {
