@@ -146,25 +146,25 @@
   font-size: 0.875rem;
   color: #b91c1c;
 }
-
-/* 3. Product Card Styles (상품 개별 카드)*/
+/*  3. Product Card Styles (상품 개별 카드 - 중고나라 스타일 외곽선 제거 버전) */
 .product-card {
-  overflow: hidden;
-  border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  background-color: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  cursor: pointer; /* 💡 하단에 흩어져 있던 속성을 위로 합쳤습니다 */
-  transition: box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent; /* 외곽 박스 배경 제거 */
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
 .product-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .product-card__image-wrap {
+  position: relative; 
   aspect-ratio: 1;
   background-color: #f3f4f6;
+  border-radius: 0.75rem;
+  overflow: hidden;
 }
 
 .product-card__image {
@@ -182,8 +182,11 @@
   color: #9ca3af;
 }
 
-.product-card__body {
-  padding: 0.75rem;
+.product-card__content {
+  padding: 0.5rem 0 0 0; 
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .product-card__title {
@@ -196,26 +199,22 @@
 }
 
 .product-card__price {
-  margin-top: 0.25rem;
   font-size: 1rem;
   font-weight: 700;
   color: #111827;
 }
 
-.product-card__id {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-/* 4. Status Badge Styles (판매 상태 뱃지)*/
+/* 4. Status Badge Styles */
 .product-card__status {
-  display: inline-block;
-  margin-top: 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  padding: 0.125rem 0.5rem;
-  font-weight: 500;
+  position: absolute;
+  top: 0.5rem;   
+  right: 0.5rem; 
+  z-index: 10;
+  border-radius: 0.375rem; 
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .status--selling { background-color: #e6f4ea; color: #137333; }

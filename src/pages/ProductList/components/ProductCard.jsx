@@ -5,9 +5,9 @@ export default function ProductCard({ product }) {
     if (status === '판매완료') return 'status--completed';
     return '';
   };
+
   return (
     <div className="product-card">
-      {/* 이미지 영역 */}
       <div className="product-card__image-wrap">
         {product.image ? (
           <img 
@@ -18,17 +18,15 @@ export default function ProductCard({ product }) {
         ) : (
           <div className="product-card__placeholder">이미지 없음</div>
         )}
-      </div>
-
-<div className="product-card__content">
-        <h3 className="product-card__title">{product.title}</h3>
-        <p className="product-card__price">{product.price.toLocaleString()}원</p>
         
         <span className={`product-card__status ${getStatusClass(product.status)}`}>
           {product.status}
         </span>
-        
-        <span className="product-card__id">#{product.id}</span>
+      </div>
+
+      <div className="product-card__content">
+        <h3 className="product-card__title">{product.title}</h3>
+        <p className="product-card__price">{product.price.toLocaleString()}원</p>
       </div>
     </div>
   );
