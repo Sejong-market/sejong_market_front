@@ -186,6 +186,31 @@
   color: #111827;
 }
 
+.product-card__counts {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;     
+  margin-top: 0.1rem;
+}
+
+.product-card__count-item {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;      
+  font-size: 0.75rem;
+  color: #555555;   
+}
+
+.product-card__count-item svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+.product-card__count-item:first-child svg {
+  color: #555555; 
+}
+
 /* 4. Status Badge Styles */
 .product-card__status {
   position: absolute;

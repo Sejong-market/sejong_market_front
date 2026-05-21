@@ -5,12 +5,12 @@ import "./ProductList.css";
 
 /* prettier-ignore */
 const MOCK_PRODUCTS = [
-  { id: 1, title: '맥북 프로 14인치', price: 1200000, status: '판매중', thumbnailUrl: '' },
-  { id: 2, title: '아이패드 에어 5세대', price: 450000, status: '판매중', thumbnailUrl: '' },
-  { id: 3, title: '오픈소스 sw', price: 25000, status: '예약중', thumbnailUrl: '' },
-  { id: 4, title: '자전거', price: 80000, status: '판매중', thumbnailUrl: '' },
-  { id: 5, title: 'LG 전자레인지', price: 60000, status: '판매중', thumbnailUrl: '' },
-  { id: 6, title: '시디즈 t50', price: 150000, status: '판매완료', thumbnailUrl: '' },
+  { id: 1, title: '맥북 프로 14인치', price: 1200000, status: '판매중', thumbnailUrl: '' , likeCount: 26, chatCount: 5},
+  { id: 2, title: '아이패드 에어 5세대', price: 450000, status: '판매중', thumbnailUrl: '' , likeCount: 150, chatCount: 20},
+  { id: 3, title: '오픈소스 sw', price: 25000, status: '예약중', thumbnailUrl: '' , likeCount: 80, chatCount: 5},
+  { id: 4, title: '자전거', price: 80000, status: '판매중', thumbnailUrl: '' , likeCount: 30, chatCount: 4},
+  { id: 5, title: 'LG 전자레인지', price: 60000, status: '판매중', thumbnailUrl: '' , likeCount: 120, chatCount: 18},
+  { id: 6, title: '시디즈 t50', price: 150000, status: '판매완료', thumbnailUrl: '' , likeCount: 90, chatCount: 8},
 ]
 
 export default function ProductList() {
