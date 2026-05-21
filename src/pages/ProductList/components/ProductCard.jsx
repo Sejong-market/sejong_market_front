@@ -1,21 +1,35 @@
 export default function ProductCard({ product }) {
-  const { id, title, price, thumbnailUrl, status } = product
-
+  const getStatusClass = (status) => {
+    if (status === '판매중') return 'status--selling';
+    if (status === '예약중') return 'status--reserved';
+    if (status === '판매완료') return 'status--completed';
+    return '';
+  };
   return (
-    <article className="product-card">
+    <div className="product-card">
+      {/* 이미지 영역 */}
       <div className="product-card__image-wrap">
-        {thumbnailUrl ? (
-          <img src={thumbnailUrl} alt={title} className="product-card__image" />
+        {product.image ? (
+          <img 
+            src={product.image} 
+            alt={product.title} 
+            className="product-card__image"
+          />
         ) : (
           <div className="product-card__placeholder">이미지 없음</div>
         )}
       </div>
-      <div className="product-card__body">
-        <h3 className="product-card__title">{title}</h3>
-        <p className="product-card__price">{price?.toLocaleString()}원</p>
-        {status && <span className="product-card__status">{status}</span>}
-        <p className="product-card__id">#{id}</p>
+
+<div className="product-card__content">
+        <h3 className="product-card__title">{product.title}</h3>
+        <p className="product-card__price">{product.price.toLocaleString()}원</p>
+        
+        <span className={`product-card__status ${getStatusClass(product.status)}`}>
+          {product.status}
+        </span>
+        
+        <span className="product-card__id">#{product.id}</span>
       </div>
-    </article>
-  )
+    </div>
+  );
 }
