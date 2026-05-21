@@ -9,7 +9,7 @@ const navItems = [
 
 export default function Header() {
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <NavLink
           to="/products"
