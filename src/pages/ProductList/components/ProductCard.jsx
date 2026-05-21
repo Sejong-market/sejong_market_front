@@ -15,6 +15,35 @@ export default function ProductCard({ product }) {
     setIsLiked(!isLiked);
   };
 
+  const formatRelativeDate = (createdAt) => {
+    if (!createdAt) {
+      return "-";
+    }
+
+    const createdDate = new Date(createdAt);
+    if (Number.isNaN(createdDate.getTime())) {
+      return createdAt;
+    }
+
+    const now = new Date();
+    const diffMs = now.getTime() - createdDate.getTime();
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes < 1) {
+      return "방금 전";
+    }
+    if (diffMinutes < 60) {
+      return `${diffMinutes}분 전`;
+    }
+
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) {
+      return `${diffHours}시간 전`;
+    }
+
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}일 전`;
+  };
+
   return (
     <div className="product-card">
       <div className="product-card__image-wrap">
@@ -63,7 +92,7 @@ export default function ProductCard({ product }) {
           </span>
         </div>
         
-        <span className="product-card__id">#{product.id}</span>
+        <span className="product-card__id"> {formatRelativeDate(product.createdAt)}</span>
       </div>
     </div>
   );

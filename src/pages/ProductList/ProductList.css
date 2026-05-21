@@ -12,7 +12,7 @@
   color: #111827;
 }
 
-/* 검색창 외곽 라인 (통합) */
+/* 검색창 외곽 라인 */
 .product-list__search-form {
   display: flex;
   align-items: center;
@@ -30,6 +30,32 @@
 
 .product-list__search-form:focus-within {
   border-color: #9A1C1F; 
+  box-shadow: 0 0 0 0.1px #9A1C1F;
+}
+
+.product-list__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.product-list__sort-select {
+  width: 10rem;
+  height: 2.2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+  padding: 0 1rem;
+  background-color: #fff;
+  color: #1f2937;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.product-list__sort-select:focus {
+  outline: none;
+  border-color: #9A1C1F;
   box-shadow: 0 0 0 0.1px #9A1C1F;
 }
 
@@ -73,7 +99,7 @@
   height: 0.875rem;
 }
 
-/* 상품 등록 버튼 (Sejong Crimson) */
+/* 상품 등록 버튼 */
 .product-list__register-btn {
   border: none;
   border-radius: 0.5rem;
@@ -90,7 +116,7 @@
   background-color: #7A1315; 
 }
 
-/* 2. Product Grid Styles (상품 그리드 레이아웃) */
+/* 2. Product Grid Styles*/
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
