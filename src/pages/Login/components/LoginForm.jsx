@@ -204,7 +204,13 @@ export default function LoginForm() {
         )}
 
         <button type="submit" disabled={loading} className="login-form__submit">
-          {loading ? '처리 중...' : isSignup ? '회원가입' : '로그인'}
+          {loading
+            ? isSignup
+              ? '회원가입 중...'
+              : '로그인 중...'
+            : isSignup
+              ? '회원가입'
+              : '로그인'}
         </button>
       </form>
 
