@@ -86,13 +86,34 @@ export default function LoginForm() {
       }
 
       navigate('/products')
-    } catch (err) {
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        '요청 처리에 실패했습니다.'
+            } catch (err) {
+      const status = err?.response?.status
 
-      setError(message)
+      if (status === 401) {
+        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+        return
+      }
+
+      if (status === 404) {
+        setError('가입되지 않은 이메일입니다.')
+        return
+      }
+
+      if (status >= 500) {
+        setError('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+        return
+      }
+
+      if (err?.message === 'Failed to fetch') {
+        setError('서버에 연결할 수 없습니다. 백엔드 서버 실행 여부를 확인해주세요.')
+        return
+      }
+
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          '요청 처리에 실패했습니다.'
+      )
     } finally {
       setLoading(false)
     }
@@ -172,9 +193,13 @@ export default function LoginForm() {
             placeholder="비밀번호를 입력하세요"
           />
         </div>
-
-        {error && <p className="login-form__error">{error}</p>}
-        {successMessage && (
+      {error && (
+        <div className="login-form__error" role="alert">
+          <strong>로그인 실패</strong>
+          <span>{error}</span>
+        </div>
+      )}  
+      {successMessage && (
           <p className="login-form__success">{successMessage}</p>
         )}
 
