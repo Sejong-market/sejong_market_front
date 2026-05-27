@@ -1,27 +1,37 @@
-import ProductCard from './ProductCard'
+import ProductCard from './ProductCard';
 
 export default function ProductGrid({ products, loading, error }) {
   if (loading) {
-    return <div className="product-grid__loading">상품을 불러오는 중...</div>
+    return (
+      <div className="product-grid__loading">
+        <span>상품을 불러오는 중입니다...</span>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="product-grid__error">{error}</div>
+    return (
+      <div className="product-grid__error">
+        <span>상품을 불러오는 중에 오류가 발생했습니다.</span>
+      </div>
+    );
   }
 
-  if (!products?.length) {
+  // 상품이 없을 때
+  if (!products || products.length === 0) {
     return (
       <div className="product-grid__empty">
-        <p>등록된 상품이 없습니다.</p>
+        <span>등록된 중고 상품이 없습니다.</span>
       </div>
-    )
+    );
   }
 
   return (
+    // 미디어 쿼리 적용
     <div className="product-grid">
-      {products.map((product) => (
+      {products.map(product => (
         <ProductCard key={product.id} product={product} />
       ))}
     </div>
-  )
+  );
 }
