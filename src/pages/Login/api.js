@@ -1,13 +1,13 @@
 import { api } from '../../shared/api/instance'
 
 export function login(credentials) {
-  return api.post('/auth/login', credentials)
+  return api.postWithResponse('/users/login', credentials)
 }
 
 export function signup(userInfo) {
-  return api.post('/auth/signup', userInfo)
+  return api.post('/users/signUp', userInfo)
 }
 
 export function logout() {
-  return api.post('/auth/logout')
+  return api.post('/users/logout')
 }

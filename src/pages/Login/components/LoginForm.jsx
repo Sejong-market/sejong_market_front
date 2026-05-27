@@ -2,6 +2,16 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, signup } from '../api'
 
+function getAuthorizationToken(response) {
+  const authorization = response?.headers?.get('Authorization')
+
+  if (!authorization) {
+    return null
+  }
+
+  return authorization.replace('Bearer ', '')
+}
+
 export default function LoginForm() {
   const navigate = useNavigate()
 
@@ -51,19 +61,11 @@ export default function LoginForm() {
 
     try {
       if (isSignup) {
-        const response = await signup({
+        await signup({
           email: form.email,
           password: form.password,
           nickname: form.nickname,
         })
-
-        const data = response?.data ?? response
-
-        if (data?.accessToken) {
-          localStorage.setItem('accessToken', data.accessToken)
-          navigate('/products')
-          return
-        }
 
         setSuccessMessage('회원가입이 완료되었습니다. 로그인해주세요.')
         setMode('login')
@@ -71,6 +73,7 @@ export default function LoginForm() {
           ...prevForm,
           password: '',
         }))
+
         return
       }
 
@@ -79,23 +82,22 @@ export default function LoginForm() {
         password: form.password,
       })
 
-      const data = response?.data ?? response
+      const token = getAuthorizationToken(response)
 
-      if (data?.accessToken) {
-        localStorage.setItem('accessToken', data.accessToken)
+      if (token) {
+        localStorage.setItem('accessToken', token)
       }
 
       navigate('/products')
-            } catch (err) {
-      const status = err?.response?.status
+    } catch (err) {
+      const status = err?.status
 
-      if (status === 401) {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-        return
-      }
-
-      if (status === 404) {
-        setError('가입되지 않은 이메일입니다.')
+      if (status === 400) {
+        setError(
+          isSignup
+            ? '이미 존재하는 이메일이거나 잘못된 요청입니다.'
+            : '존재하지 않는 이메일이거나 비밀번호가 일치하지 않습니다.'
+        )
         return
       }
 
@@ -109,11 +111,7 @@ export default function LoginForm() {
         return
       }
 
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          '요청 처리에 실패했습니다.'
-      )
+      setError(err?.message || '요청 처리에 실패했습니다.')
     } finally {
       setLoading(false)
     }
@@ -193,13 +191,15 @@ export default function LoginForm() {
             placeholder="비밀번호를 입력하세요"
           />
         </div>
-      {error && (
-        <div className="login-form__error" role="alert">
-          <strong>로그인 실패</strong>
-          <span>{error}</span>
-        </div>
-      )}  
-      {successMessage && (
+
+        {error && (
+          <div className="login-form__error" role="alert">
+            <strong>{isSignup ? '회원가입 실패' : '로그인 실패'}</strong>
+            <span>{error}</span>
+          </div>
+        )}
+
+        {successMessage && (
           <p className="login-form__success">{successMessage}</p>
         )}
 
