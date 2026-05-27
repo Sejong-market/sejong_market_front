@@ -18,18 +18,11 @@
 }
 
 .login-card__logo {
-  display: flex;
-  width: 3.25rem;
-  height: 3.25rem;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  width: 3.75rem;
+  height: 3.75rem;
+  object-fit: contain;
   margin: 0 auto 1rem;
-  border-radius: 999px;
-  border: 1px solid #fecaca;
-  background-color: #fff5f5;
-  color: #9a1c1f;
-  font-size: 1.5rem;
-  font-weight: 800;
 }
 
 .login-card__title {
