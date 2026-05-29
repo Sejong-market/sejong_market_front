@@ -1,0 +1,128 @@
+:root {
+  --sejong-color: #9A1C1F;
+  --sejong-hover: #7D1417;
+  --bg-gray: #f9f9f9;
+  --border-gray: #e0e0e0;
+  --text-dark: #333333;
+}
+
+.product-register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: var(--bg-gray);
+  min-height: calc(100vh - 120px); /* 푸터/헤더 높이에 따라 자동 조절 */
+}
+
+.product-register__container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.product-register__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--sejong-color);
+  padding-bottom: 8px;
+}
+
+.product-register__error {
+  color: #ff3b30;
+  background-color: #ffe6e5;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.product-register__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-register__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-register__field label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555555;
+}
+
+.product-register__field input,
+.product-register__field select,
+.product-register__field textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.product-register__field input:focus,
+.product-register__field select:focus,
+.product-register__field textarea:focus {
+  border-color: var(--sejong-color);
+  box-shadow: 0 0 0 3px rgba(154, 28, 31, 0.12);
+}
+
+.product-register__field textarea {
+  resize: none;
+}
+
+/* 하단 제어 버튼 컴포넌트 */
+.product-register__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.product-register__cancel-btn,
+.product-register__submit-btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.product-register__cancel-btn {
+  background-color: #eaeaea;
+  color: #666666;
+}
+
+.product-register__cancel-btn:hover {
+  background-color: #dddddd;
+}
+
+.product-register__submit-btn {
+  background-color: var(--sejong-color);
+  color: #ffffff;
+}
+
+.product-register__submit-btn:hover {
+  background-color: var(--sejong-hover);
+}
+
+.product-register__submit-btn:disabled,
+.product-register__cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
