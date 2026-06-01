@@ -8,7 +8,7 @@
 .product-register {
   display: flex;
   justify-content: center;
-  padding: 1.25rem 1.25rem 3.75rem;
+  padding: 1.25rem 1.25rem 2rem;
   background-color: #f9fafb;
   min-height: calc(100vh - 7.5rem);
   box-sizing: border-box;
@@ -20,7 +20,7 @@
 }
 
 .product-register__title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-dark);
   margin-bottom: 2rem;
@@ -33,7 +33,7 @@
   background-color: #ffe6e5;
   padding: 0.625rem 0.875rem;
   border-radius: 0.375rem;
-  font-size: 0.875rem;
+  font-size: 0.7rem;
   margin-bottom: 1.5rem;
 }
 
@@ -54,8 +54,8 @@
 .product-register__field textarea {
   padding: 0.75rem;
   border: 0.0625rem solid var(--border-gray);
-  border-radius: 0.375rem;
-  font-size: 1rem;
+  border-radius: 0.4rem;
+  font-size: 0.875rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -99,7 +99,7 @@
 }
 
 .product-register__upload-icon {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 0.125rem;
 }
 
@@ -151,7 +151,7 @@
   border: none;
   color: #666666;
   cursor: pointer;
-  font-size: 0.7rem; /* 카테고리 글씨보다 살짝 작게 설정 */
+  font-size: 0.7rem; 
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -172,7 +172,7 @@
 .product-register__submit-btn {
   flex: 1;
   padding: 0.875rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   border-radius: 0.375rem;
   cursor: pointer;

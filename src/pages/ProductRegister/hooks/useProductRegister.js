@@ -7,7 +7,7 @@ export default function useProductRegister() {
   const [formData, setFormData] = useState({
     title: '',
     category: '도서',
-    price: '',
+    price: '0',
     description: '',
     status: '판매중',
     location: '학생회관'

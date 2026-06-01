@@ -60,11 +60,13 @@ export default function ProductRegisterForm({
         </button>
       </div>
         <select id="category" name="category" value={formData.category} onChange={handleChange} disabled={loading}>
-          <option value="도서">도서</option>
-          <option value="전공도서">전공도서</option>
-          <option value="생활가전">생활가전</option>
-          <option value="의류">의류</option>
-          <option value="기타">기타</option>
+              <option value="도서"> 도서/음반/문구</option>
+              <option value="전자기기"> 전자기기/가전</option>
+              <option value="생활용품"> 생활용품</option>
+              <option value="의류/잡화"> 의류/잡화</option>
+              <option value="뷰티"> 뷰티</option>
+              <option value="무료나눔"> 무료나눔</option>
+              <option value="기타"> 기타</option>
         </select>
         {errors.category && <p className="product-register__field-error">{errors.category}</p>}
     </div>
