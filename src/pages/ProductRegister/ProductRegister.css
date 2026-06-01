@@ -49,10 +49,31 @@
   gap: 0.5rem;
 }
 
+.product-register__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .product-register__field label {
   font-size: 0.95rem;
   font-weight: 600;
   color: #555555;
+}
+
+.product-register__info-btn {
+  background: none;
+  border: none;
+  color: #666666;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.product-register__info-btn:hover {
+  color: var(--sejong-color);
 }
 
 .product-register__field input,

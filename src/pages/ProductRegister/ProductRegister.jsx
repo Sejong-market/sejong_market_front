@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProduct } from './api';
+import ProhibitedItemsModal from './components/ProhibitedItemsModal';
 import './ProductRegister.css';
 
 export default function ProductRegister() {
@@ -17,6 +18,7 @@ export default function ProductRegister() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -110,7 +112,12 @@ export default function ProductRegister() {
           </div>
 
           <div className="product-register__field">
-            <label htmlFor="category">카테고리</label>
+            <div className="product-register__label-row">
+              <label htmlFor="category">카테고리</label>
+              <button type="button" className="product-register__info-btn" onClick={() => setIsModalOpen(true)}>
+                ⚠️ 거래 제한 품목 안내
+              </button>
+            </div>
             <select id="category" name="category" value={formData.category} onChange={handleChange} disabled={loading}>
               <option value="도서"> 도서/음반/문구</option>
               <option value="전자기기"> 전자기기/가전</option>
@@ -156,6 +163,8 @@ export default function ProductRegister() {
           </div>
         </form>
       </div>
+
+      <ProhibitedItemsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
