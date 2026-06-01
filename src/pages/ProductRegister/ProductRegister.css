@@ -136,17 +136,31 @@
   font-size: 0.75rem;
 }
 
-.product-register__notice-trigger {
-  margin-bottom: 1.5rem;
+.product-register__label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;      
+  margin-bottom: 0.5rem;
 }
 
-.product-register__notice-trigger button {
+.product-register__label-row label {
+  margin-bottom: 0 !important;
+}
+
+.product-register__notice-btn {
   background: none;
   border: none;
-  color: #555;
-  text-decoration: underline;
+  color: #666666;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.7rem; /* 카테고리 글씨보다 살짝 작게 설정 */
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.product-register__notice-btn:hover {
+  color: var(--sejong-color); 
 }
 
 .product-register__buttons {
