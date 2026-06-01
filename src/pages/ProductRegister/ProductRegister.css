@@ -12,7 +12,7 @@
   align-items: center;
   padding: 40px 20px;
   background-color: var(--bg-gray);
-  min-height: calc(100vh - 120px); /* 푸터/헤더 높이에 따라 자동 조절 */
+  min-height: calc(100vh - 120px);
 }
 
 .product-register__container {
@@ -84,7 +84,6 @@
   resize: none;
 }
 
-/* 하단 제어 버튼 컴포넌트 */
 .product-register__buttons {
   display: flex;
   justify-content: flex-end;
@@ -125,4 +124,49 @@
 .product-register__cancel-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.product-register__image-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.product-register__image-label {
+  cursor: pointer;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px dashed #d1d5db;
+  transition: background-color 0.2s;
+}
+
+.product-register__image-label:hover {
+  background-color: #e5e7eb;
+}
+
+.product-register__image-preview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-gray);
+}
+
+.product-register__custom-input {
+  margin-top: 6px;
+}
+
+.product-register__no-spin {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.product-register__no-spin::-webkit-outer-spin-button,
+.product-register__no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

@@ -1,5 +1,3 @@
-// src/pages/ProductRegister/api.js
-
 import { api } from '../../shared/api/instance'
 
 export async function createProduct(productData) {

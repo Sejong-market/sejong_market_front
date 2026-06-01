@@ -5,51 +5,62 @@ import './ProductRegister.css';
 
 export default function ProductRegister() {
   const navigate = useNavigate();
-  
-  // 폼 입력 상태 관리
   const [formData, setFormData] = useState({
     title: '',
     price: '',
     description: '',
-    status: '판매중', // 기본값
-    image: '/products/default.png' // 임시 기본 이미지 주소
+    status: '판매중',
+    location: '학생회관'
   });
-
+  const [customLocation, setCustomLocation] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 인풋 변경 핸들러
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 폼 제출 핸들러
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setImagePreview(URL.createObjectURL(file));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // 간단한 유효성 검사
     if (!formData.title.trim() || !formData.price || !formData.description.trim()) {
       alert('모든 필드를 입력해주세요.');
       setLoading(false);
       return;
     }
 
+    const numericPrice = Number(formData.price);
+    if (numericPrice <= 0) {
+      alert('판매 가격은 0원 이하로 입력할 수 없습니다.');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.location === '직접입력' && !customLocation.trim()) {
+      alert('희망 거래 장소를 직접 입력해주세요.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // 전송할 데이터 포맷 가공 (가격을 숫자형으로 변환)
       const submitData = {
         ...formData,
-        price: Number(formData.price)
+        price: numericPrice,
+        location: formData.location === '직접입력' ? customLocation.trim() : formData.location,
+        image: imagePreview || '/products/default.png'
       };
-
       await createProduct(submitData);
-      alert('상품이 성공적으로 등록되었습니다 🎉');
-      navigate('/products'); // 등록 완료 후 목록 페이지로 이동
+      alert('중고 물품이 성공적으로 등록되었습니다 🎉');
+      navigate('/products'); 
     } catch (err) {
       setError(err.message ?? '상품 등록에 실패했습니다.');
     } finally {
@@ -61,85 +72,56 @@ export default function ProductRegister() {
     <div className="product-register">
       <div className="product-register__container">
         <h2 className="product-register__title">중고상품 등록</h2>
-        
         {error && <p className="product-register__error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="product-register__form">
-          {/* 상품 제목 */}
+          <div className="product-register__field">
+            <label>상품 이미지</label>
+            <div className="product-register__image-wrap">
+              <label className="product-register__image-label">
+                사진 선택하기 📸
+                <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} disabled={loading} />
+              </label>
+              {imagePreview && <img src={imagePreview} alt="미리보기" className="product-register__image-preview" />}
+            </div>
+          </div>
+
           <div className="product-register__field">
             <label htmlFor="title">상품명</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="상품 이름을 입력해주세요"
-              value={formData.title}
-              onChange={handleChange}
-              disabled={loading}
-            />
+            <input type="text" id="title" name="title" placeholder="상품 이름을 입력해주세요" value={formData.title} onChange={handleChange} disabled={loading} />
           </div>
 
-          {/* 상품 가격 */}
           <div className="product-register__field">
             <label htmlFor="price">판매 가격 (₩)</label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              placeholder="숫자만 입력해주세요 (예: 15000)"
-              value={formData.price}
-              onChange={handleChange}
-              disabled={loading}
-            />
+            <input type="number" id="price" name="price" placeholder="숫자만 입력해주세요" value={formData.price} onChange={handleChange} disabled={loading} className="product-register__no-spin" />
           </div>
 
-          {/* 판매 상태 */}
           <div className="product-register__field">
-            <label htmlFor="status">판매 상태</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              disabled={loading}
-            >
-              <option value="판매중">판매중</option>
-              <option value="예약중">예약중</option>
-              <option value="판매완료">판매완료</option>
+            <label htmlFor="location">희망 거래 장소</label>
+            <select id="location" name="location" value={formData.location} onChange={handleChange} disabled={loading}>
+              <option value="학생회관">학생회관</option>
+              <option value="대양AI센터">대양AI센터</option>
+              <option value="군자관">군자관</option>
+              <option value="학술정보원">학술정보원(도서관)</option>
+              <option value="광개토관">광개토관</option>
+              <option value="정문/어린이대공원역">정문 / 어린이대공원역</option>
+              <option value="쪽문(쪽문상권)">쪽문 주변</option>
+              <option value="무관">무관 (장소 상관없음)</option>
+              <option value="직접입력">✏️ 직접 입력</option>
             </select>
+            {formData.location === '직접입력' && (
+              <input type="text" placeholder="희망하시는 거래 장소를 상세히 적어주세요" value={customLocation} onChange={(e) => setCustomLocation(e.target.value)} disabled={loading} className="product-register__custom-input" />
+            )}
           </div>
 
-          {/* 상품 설명 */}
           <div className="product-register__field">
             <label htmlFor="description">설명</label>
-            <textarea
-              id="description"
-              name="description"
-              rows="6"
-              placeholder="신뢰할 수 있는 거래를 위해 상품 상태를 자세히 적어주세요. (대여 가능 여부, 구매 시기, 하자 유무 등)"
-              value={formData.description}
-              onChange={handleChange}
-              disabled={loading}
-            ></textarea>
+            <textarea id="description" name="description" rows="5" placeholder="상품 상태를 자세히 적어주세요." value={formData.description} onChange={handleChange} disabled={loading}></textarea>
           </div>
 
-          {/* 하단 버튼 구역 */}
           <div className="product-register__buttons">
-            <button
-              type="button"
-              className="product-register__cancel-btn"
-              onClick={() => navigate('/products')}
-              disabled={loading}
-            >
-              취소
-            </button>
-            <button
-              type="submit"
-              className="product-register__submit-btn"
-              disabled={loading}
-            >
-              {loading ? '등록 중...' : '등록하기'}
-            </button>
+            <button type="button" className="product-register__cancel-btn" onClick={() => navigate('/products')} disabled={loading}>취소</button>
+            <button type="submit" className="product-register__submit-btn" disabled={loading}>{loading ? '등록 중...' : '등록하기'}</button>
           </div>
         </form>
       </div>
