@@ -30,14 +30,14 @@ export default function ProductRegisterForm({
         </div>
       </div>
 
-      {/* 제목 필드 */}
+      {/* 상품명 필드 */}
       <div className="product-register__field">
-        <label htmlFor="title">제목</label>
+        <label htmlFor="title">상품명</label>
         <input 
           type="text" 
           id="title" 
           name="title" 
-          placeholder="글 제목을 입력해주세요" 
+          placeholder="상품명을 입력해주세요" 
           value={formData.title} 
           onChange={handleChange} 
           disabled={loading} 
@@ -71,12 +71,12 @@ export default function ProductRegisterForm({
 
       {/* 가격 필드 */}
       <div className="product-register__field">
-        <label htmlFor="price">가격 (₩)</label>
+        <label htmlFor="price">판매 가격</label>
         <input 
           type="number" 
           id="price" 
           name="price" 
-          placeholder="가격을 입력해주세요" 
+          placeholder="₩ 판매 가격" 
           value={formData.price} 
           onChange={handleChange} 
           disabled={loading} 
@@ -92,7 +92,7 @@ export default function ProductRegisterForm({
           id="description" 
           name="description" 
           rows="5" 
-          placeholder="상품 상태를 자세히 적어주세요." 
+          placeholder="신뢰할 수 있는 거래를 위해 상품 설명을 자세히 적어주세요.&#10;&#10;- 구매 시기 (년, 월, 일)&#10;- 사용 기간&#10;- 제품 상태(하자 여부)&#10;- 희망 거래 방식 및 기타 특이사항&#10;&#10;※ 학교 커뮤니티 규정에 어긋나는 금지 물품 등록 시 게시물이 삭제될 수 있습니다."
           value={formData.description} 
           onChange={handleChange} 
           disabled={loading}

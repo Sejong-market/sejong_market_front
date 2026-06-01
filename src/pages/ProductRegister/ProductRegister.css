@@ -16,8 +16,7 @@
 
 .product-register__container {
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 100%;
 }
 
 .product-register__title {
@@ -219,4 +218,16 @@
   font-size: 0.75rem; 
   margin-top: 0.375rem;
   display: block;
+}
+
+.product-register__field textarea {
+  min-height: 17rem;     /* 기본 높이를 기존보다 훨씬 크게 설정 (약 200px) */
+  resize: vertical;      /* 사용자가 마우스로 높낮이를 직접 조절할 수 있도록 설정 */
+  line-height: 1.6;      /* 줄간격을 넓혀서 긴 글을 써도 읽기 편하게 수정 */
+}
+
+.product-register__field input[type="number"]::-webkit-outer-spin-button,
+.product-register__field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
