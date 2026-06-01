@@ -130,9 +130,28 @@ export default function ProductRegister() {
           </div>
 
           <div className="product-register__field">
-            <label htmlFor="price">판매 가격 (₩)</label>
-            <input type="number" id="price" name="price" placeholder="숫자만 입력해주세요" value={formData.price} onChange={handleChange} disabled={loading} className="product-register__no-spin" />
+            <label htmlFor="price">판매 가격 </label>
+            <input type="number" id="price" name="price" placeholder="₩ 판매 가격" value={formData.price} onChange={handleChange} disabled={loading} className="product-register__no-spin" />
           </div>
+
+          <div className="product-register__field">
+            <label htmlFor="description">설명</label>
+            <div className="product-register__textarea-container">
+            <textarea
+              id="description"
+              name="description"
+              rows="10"
+              placeholder="신뢰할 수 있는 거래를 위해 상품 설명을 자세히 적어주세요.&#10;&#10;- 구매 시기 (년, 월, 일)&#10;- 사용 기간&#10;- 제품 상태(하자 여부)&#10;- 희망 거래 방식 및 기타 특이사항&#10;&#10;※ 학교 커뮤니티 규정에 어긋나는 금지 물품 등록 시 게시물이 삭제될 수 있습니다."
+              value={formData.description}
+              onChange={handleChange}
+              maxLength={5000}
+              disabled={loading}
+            ></textarea>
+            <div className="product-register__char-count">
+              {formData.description ? formData.description.length : 0} / 5000
+            </div>
+          </div>
+        </div>
 
           <div className="product-register__field">
             <label htmlFor="location">희망 거래 장소</label>
@@ -140,21 +159,15 @@ export default function ProductRegister() {
               <option value="학생회관">학생회관</option>
               <option value="대양AI센터">대양AI센터</option>
               <option value="군자관">군자관</option>
-              <option value="학술정보원">학술정보원(도서관)</option>
+              <option value="학술정보원">학술정보원</option>
               <option value="광개토관">광개토관</option>
               <option value="정문/어린이대공원역">정문</option>
               <option value="쪽문(쪽문상권)">쪽문</option>
-              <option value="무관">무관 (장소 상관없음)</option>
-              <option value="직접입력">✏️ 직접 입력</option>
+              <option value="직접입력">직접 입력</option>
             </select>
             {formData.location === '직접입력' && (
-              <input type="text" placeholder="희망하시는 거래 장소를 상세히 적어주세요" value={customLocation} onChange={(e) => setCustomLocation(e.target.value)} disabled={loading} className="product-register__custom-input" />
+              <input type="text" placeholder="희망하시는 거래 장소를 적어주세요" value={customLocation} onChange={(e) => setCustomLocation(e.target.value)} disabled={loading} className="product-register__custom-input" />
             )}
-          </div>
-
-          <div className="product-register__field">
-            <label htmlFor="description">설명</label>
-            <textarea id="description" name="description" rows="5" placeholder="상품 상태를 자세히 적어주세요." value={formData.description} onChange={handleChange} disabled={loading}></textarea>
           </div>
 
           <div className="product-register__buttons">
