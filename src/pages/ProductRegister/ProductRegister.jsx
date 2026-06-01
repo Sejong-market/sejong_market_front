@@ -7,6 +7,7 @@ export default function ProductRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
+    category: '도서',
     price: '',
     description: '',
     status: '판매중',
@@ -105,7 +106,20 @@ export default function ProductRegister() {
 
           <div className="product-register__field">
             <label htmlFor="title">상품명</label>
-            <input type="text" id="title" name="title" placeholder="상품 이름을 입력해주세요" value={formData.title} onChange={handleChange} disabled={loading} />
+            <input type="text" id="title" name="title" placeholder="상품명을 입력해주세요" value={formData.title} onChange={handleChange} disabled={loading} />
+          </div>
+
+          <div className="product-register__field">
+            <label htmlFor="category">카테고리</label>
+            <select id="category" name="category" value={formData.category} onChange={handleChange} disabled={loading}>
+              <option value="도서"> 도서/음반/문구</option>
+              <option value="전자기기"> 전자기기/가전</option>
+              <option value="생활용품"> 생활용품</option>
+              <option value="의류/잡화"> 의류/잡화</option>
+              <option value="뷰티"> 뷰티</option>
+              <option value="무료나눔"> 무료나눔</option>
+              <option value="기타"> 기타</option>
+            </select>
           </div>
 
           <div className="product-register__field">
@@ -121,8 +135,8 @@ export default function ProductRegister() {
               <option value="군자관">군자관</option>
               <option value="학술정보원">학술정보원(도서관)</option>
               <option value="광개토관">광개토관</option>
-              <option value="정문/어린이대공원역">정문 / 어린이대공원역</option>
-              <option value="쪽문(쪽문상권)">쪽문 주변</option>
+              <option value="정문/어린이대공원역">정문</option>
+              <option value="쪽문(쪽문상권)">쪽문</option>
               <option value="무관">무관 (장소 상관없음)</option>
               <option value="직접입력">✏️ 직접 입력</option>
             </select>
