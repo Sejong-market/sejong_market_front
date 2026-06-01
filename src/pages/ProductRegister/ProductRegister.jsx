@@ -13,7 +13,7 @@ export default function ProductRegister() {
     location: '학생회관'
   });
   const [customLocation, setCustomLocation] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -23,8 +23,18 @@ export default function ProductRegister() {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (images.length + files.length > 10) {
+      alert('사진은 최대 10장까지만 등록할 수 있습니다.');
+      return;
+    }
+    const newUrls = files.map((file) => URL.createObjectURL(file));
+    setImages((prev) => [...prev, ...newUrls]);
+    e.target.value = '';
+  };
+
+  const handleRemoveImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -56,11 +66,11 @@ export default function ProductRegister() {
         ...formData,
         price: numericPrice,
         location: formData.location === '직접입력' ? customLocation.trim() : formData.location,
-        image: imagePreview || '/products/default.png'
+        images: images.length > 0 ? images : ['/products/default.png']
       };
       await createProduct(submitData);
       alert('중고 물품이 성공적으로 등록되었습니다 🎉');
-      navigate('/products'); 
+      navigate('/products');
     } catch (err) {
       setError(err.message ?? '상품 등록에 실패했습니다.');
     } finally {
@@ -71,18 +81,25 @@ export default function ProductRegister() {
   return (
     <div className="product-register">
       <div className="product-register__container">
-        <h2 className="product-register__title">중고상품 등록</h2>
+        <h2 className="product-register__title">상품 정보</h2>
         {error && <p className="product-register__error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="product-register__form">
           <div className="product-register__field">
             <label>상품 이미지</label>
-            <div className="product-register__image-wrap">
-              <label className="product-register__image-label">
-                사진 선택하기 📸
-                <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} disabled={loading} />
+            <div className="product-register__image-list">
+              <label className="product-register__upload-btn">
+                <span className="product-register__upload-icon">📸</span>
+                <span>{images.length}/10</span>
+                <input type="file" accept="image/*" multiple onChange={handleImageChange} style={{ display: 'none' }} disabled={loading || images.length >= 10} />
               </label>
-              {imagePreview && <img src={imagePreview} alt="미리보기" className="product-register__image-preview" />}
+
+              {images.map((url, index) => (
+                <div key={index} className="product-register__preview-wrap">
+                  <img src={url} alt={`미리보기 ${index + 1}`} className="product-register__preview-img" />
+                  <button type="button" className="product-register__remove-btn" onClick={() => handleRemoveImage(index)} disabled={loading}>✕</button>
+                </div>
+              ))}
             </div>
           </div>
 
