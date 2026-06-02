@@ -5,6 +5,7 @@ import ProductList from './pages/ProductList/ProductList'
 import MyPage from './pages/MyPage/MyPage'
 import ProductRegister from './pages/ProductRegister/ProductRegister' 
 import ProductDetail from './pages/ProductDetail/ProductDetail'
+import ProtectedRoute from './shared/components/ProtectedRoute' // 1. ProtectedRoute 임포트
 
 export default function App() {
   return (
@@ -13,10 +14,16 @@ export default function App() {
 
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/products" replace />} />
+        
+        {/* 🔓 누구나 볼 수 있는 페이지 (비로그인 허용) */}
         <Route path="/products" element={<ProductList />} />
-        <Route path="/products/new" element={<ProductRegister />} />
-        <Route path="/mypage" element={<MyPage />} />
         <Route path="/products/:productId" element={<ProductDetail />} />
+        
+        {/* 🔒 로그인한 사용자만 접근 가능한 페이지 그룹 */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/products/new" element={<ProductRegister />} />
+          <Route path="/mypag" element={<MyPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<Navigate to="/products" replace />} />
