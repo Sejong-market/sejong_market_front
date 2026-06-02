@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import ProductGrid from "./components/ProductGrid";
 import { useProducts } from "./hooks/useProducts";
 import { SORT_OPTIONS } from "./constants/productConstants";
 import "./ProductList.css";
 
 export default function ProductList() {
+  const navigate = useNavigate();
   const {
     loading,
     error,
@@ -37,7 +39,9 @@ export default function ProductList() {
           </button>
         </form>
 
-        <button type="button" className="product-list__register-btn">
+        <button type="button" 
+        className="product-list__register-btn" 
+        onClick={() => navigate("/products/new")}>
           상품 등록
         </button>
       </div>
