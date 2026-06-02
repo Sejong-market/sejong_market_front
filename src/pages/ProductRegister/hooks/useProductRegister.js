@@ -46,7 +46,7 @@ export default function useProductRegister() {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.title.trim()) newErrors.title = '제목을 입력해주세요.';
-    if (!formData.price) newErrors.price = '가격을 입력해주세요.';
+    if (!formData.price || formData.price === '0') newErrors.price = '가격을 입력해주세요.';
     if (formData.location === '직접입력' && !customLocation.trim()) {
       newErrors.customLocation = '거래 장소를 입력해주세요.';
     }
