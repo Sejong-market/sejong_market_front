@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// import { updateMyProfile } from '../api'; // 실제 API 연동 시 주석 해제
 
 export default function ProfileEditModal({ isOpen, onClose, currentNickname, onRefresh }) {
   const [nickname, setNickname] = useState('');
@@ -20,24 +19,11 @@ export default function ProfileEditModal({ isOpen, onClose, currentNickname, onR
 
     setLoading(true);
     try {
-      const data = {};
-      if (nickname.trim()) data.nickname = nickname;
-      if (password.trim()) data.password = password;
-
-      // 실제 API 호출 로직 (현재 UI-First 단계이므로 임시 주석 처리)
-      // await updateMyProfile(data);
-      
-      // 모달 닫기 및 데이터 새로고침
+      // API 연동 생략 단계 처리
       onRefresh(); 
       onClose();
     } catch (err) {
-      if (err.response?.status === 400) {
-        setError('잘못된 요청 형식입니다.');
-      } else if (err.response?.status === 401) {
-        setError('인증에 실패했습니다. 다시 로그인해주세요.');
-      } else {
-        setError('정보 수정 중 오류가 발생했습니다.');
-      }
+      setError(err.response?.status === 400 ? '잘못된 요청 형식입니다.' : '오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -72,19 +58,10 @@ export default function ProfileEditModal({ isOpen, onClose, currentNickname, onR
           {error && <div className="profile-modal__error">{error}</div>}
           
           <div className="profile-modal__actions">
-            <button
-              type="button"
-              className="profile-modal__btn profile-modal__btn--cancel"
-              onClick={onClose}
-              disabled={loading}
-            >
+            <button type="button" className="profile-modal__btn profile-modal__btn--cancel" onClick={onClose} disabled={loading}>
               취소
             </button>
-            <button
-              type="submit"
-              className="profile-modal__btn profile-modal__btn--submit"
-              disabled={loading}
-            >
+            <button type="submit" className="profile-modal__btn profile-modal__btn--submit" disabled={loading}>
               {loading ? '수정 중...' : '수정 완료'}
             </button>
           </div>

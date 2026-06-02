@@ -1,3 +1,4 @@
+/* 마이페이지 레이아웃 */
 .mypage {
   display: flex;
   flex-direction: column;
@@ -26,34 +27,7 @@
   color: #6b7280;
 }
 
-.mypage__list-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
-  background-color: #fff;
-  padding: 0.75rem 1rem;
-}
-
-.mypage__list-item-title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #111827;
-}
-
-.mypage__list-item-price {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #374151;
-}
-
-.profile-section__loading,
-.profile-section__empty {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
+/* 프로필 섹션 */
 .profile-section {
   display: flex;
   align-items: center;
@@ -64,12 +38,16 @@
   padding: 1.25rem;
 }
 
-/* 텍스트 영역이 남은 공간을 차지하도록 하여 우측 버튼을 끝으로 밀어냅니다 */
+.profile-section__loading,
+.profile-section__empty {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
 .profile-section__info {
   flex: 1; 
 }
 
-/* 프로필 아바타(원형) 배경 및 글자색 붉은 톤으로 변경 */
 .profile-section__avatar {
   display: flex;
   width: 4rem;
@@ -77,10 +55,10 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  background-color: #ffe6e5; /* 연한 붉은색 */
+  background-color: #ffe6e5;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #9A1C1F; /* 세종대 붉은색 */
+  color: #9A1C1F;
 }
 
 .profile-section__name {
@@ -94,13 +72,14 @@
   color: #6b7280;
 }
 
-.profile-section__department {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #9ca3af;
+/* 프로필 액션 버튼 그룹 */
+.profile-section__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
-/* 프로필 우측 정보 수정 버튼 디자인 */
 .profile-section__edit-btn {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -117,6 +96,22 @@
   background-color: #ffe6e5;
 }
 
+.profile-section__delete-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.profile-section__delete-btn:hover {
+  color: #6b7280;
+}
+
+/* 탭 메뉴 */
 .tab-menu {
   display: flex;
   gap: 1rem;
@@ -138,13 +133,65 @@
   border-bottom: 2px solid #9A1C1F;
 }
 
+/* 정렬 툴바 및 그리드 */
+.mypage__toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mypage__product-count {
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.product-list__sort-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-list__sort-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.product-list__sort-btn:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 10px;
+  background-color: #d1d5db;
+}
+
+.product-list__sort-btn:hover {
+  color: #374151;
+}
+
+.product-list__sort-btn--active {
+  color: #9A1C1F;
+  font-weight: 700;
+}
+
 .mypage__product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
 
-/* 우측 하단 고정형 동그라미 + 버튼 스타일 (FAB) */
+/* 하단 고정 등록 버튼 (FAB) */
 .mypage__fab {
   position: fixed;
   bottom: 3rem;
@@ -169,7 +216,7 @@
   transform: scale(1.05);
 }
 
-/* 프로필 정보 수정 모달 관련 CSS */
+/* 회원정보 수정 모달 */
 .profile-modal-overlay {
   position: fixed;
   top: 0;
@@ -264,83 +311,4 @@
 
 .profile-modal__btn--submit:hover {
   background-color: #7D1417;
-}
-
-/* 정보수정 버튼과 탈퇴 버튼을 감싸는 컨테이너 스타일 */
-.profile-section__actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* 오른쪽 정렬 (기존 레이아웃 방향 유지) */
-  gap: 0.5rem;          /* 두 버튼 사이의 간격 */
-}
-
-/* 회원 탈퇴 버튼 스타일 (작은 회색 글씨) */
-.profile-section__delete-btn {
-  background: none;
-  border: none;
-  padding: 5px;
-  font-size: 0.75rem;     /* 작은 글씨 크기 */
-  color: #9ca3af;         /* 연한 회색 (gray-400 대용) */
-  text-decoration: underline; /* 클릭 가능한 링크 느낌을 주기 위한 밑줄 추가 */
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-/* 마우스 호버 시 가독성을 위해 살짝 진해지도록 처리 */
-.profile-section__delete-btn:hover {
-  color: #6b7280;         /* 조금 더 어두운 회색 (gray-500) */
-}
-
-.mypage__toolbar {
-  display: flex;
-  justify-content: space-between; /* ✨ 왼쪽에 갯수, 오른쪽에 정렬버튼 분할 */
-  align-items: center;
-  width: 100%;
-}
-
-.mypage__product-count {
-  font-size: 0.875rem;
-  color: #4b5563;
-  font-weight: 500;
-}
-
-/* 정렬 그룹 내부 버튼들은 단순히 가로 나열만 유지 */
-.product-list__sort-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.product-list__sort-btn {
-  background: none;
-  border: none;
-  padding: 0.25rem 0;
-  font-size: 0.875rem;
-  color: #6b7280; /* 기본 회색조 */
-  cursor: pointer;
-  font-weight: 500;
-  transition: color 0.2s;
-  position: relative;
-}
-
-/* 버튼 사이의 세로 구분선(|) 효과 */
-.product-list__sort-btn:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: -0.4rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1px;
-  height: 10px;
-  background-color: #d1d5db;
-}
-
-.product-list__sort-btn:hover {
-  color: #374151;
-}
-
-/* 활성화(선택) 되었을 때 세종대 레드 컬러 적용 */
-.product-list__sort-btn--active {
-  color: #9A1C1F;
-  font-weight: 700;
 }
