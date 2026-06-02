@@ -9,7 +9,17 @@ export default function ProductRegister() {
   return (
     <div className="product-register">
       <div className="product-register__container">
-        <h2 className="product-register__title">상품 등록</h2>
+        <h2 className="product-register__title"> 상품 등록 
+         <button 
+
+          type="button" 
+
+          className="product-register__notice-btn" 
+          onClick={() => props.setIsModalOpen(true)}
+        >
+          [🚫 거래 제한 품목 안내 🚫]
+        </button>
+        </h2>
         {props.error && <div className="product-register__error">{props.error}</div>}
         <ProductRegisterForm {...props} />
       </div>
