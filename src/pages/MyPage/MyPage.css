@@ -290,3 +290,57 @@
 .profile-section__delete-btn:hover {
   color: #6b7280;         /* 조금 더 어두운 회색 (gray-500) */
 }
+
+.mypage__toolbar {
+  display: flex;
+  justify-content: space-between; /* ✨ 왼쪽에 갯수, 오른쪽에 정렬버튼 분할 */
+  align-items: center;
+  width: 100%;
+}
+
+.mypage__product-count {
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* 정렬 그룹 내부 버튼들은 단순히 가로 나열만 유지 */
+.product-list__sort-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-list__sort-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  color: #6b7280; /* 기본 회색조 */
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+
+/* 버튼 사이의 세로 구분선(|) 효과 */
+.product-list__sort-btn:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 10px;
+  background-color: #d1d5db;
+}
+
+.product-list__sort-btn:hover {
+  color: #374151;
+}
+
+/* 활성화(선택) 되었을 때 세종대 레드 컬러 적용 */
+.product-list__sort-btn--active {
+  color: #9A1C1F;
+  font-weight: 700;
+}

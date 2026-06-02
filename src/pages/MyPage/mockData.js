@@ -20,7 +20,7 @@ export const MOCK_PRODUCTS = [
     status: 'SOLD_OUT',
     image: '',
     sellerNickname: '세종이',
-    createdAt: '2026-05-27T10:00:00'
+    createdAt: '2026-05-29T10:00:00'
   },
   {
     productId: 3,

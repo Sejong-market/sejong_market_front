@@ -7,11 +7,18 @@ import ProfileEditModal from './components/ProfileEditModal';
 import { MOCK_PROFILE, MOCK_PRODUCTS } from './MockData.js';
 import './MyPage.css';
 
+const SORT_OPTIONS = [
+  { id: 'latest', label: '최신순' },
+  { id: 'price_asc', label: '낮은 가격 순' },
+  { id: 'price_desc', label: '높은 가격 순' },
+];
+
 export default function MyPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
+  const [sortOption, setSortOption] = useState('latest'); // 2. 정렬 옵션 상태 추가
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -29,8 +36,9 @@ export default function MyPage() {
      // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
       setProfile(MOCK_PROFILE);
       setProducts(MOCK_PRODUCTS);
-    //} 
-    setLoading(false);
+    // } finally {
+         setLoading(false);
+    // }  
   }, []);
 
   useEffect(() => {
@@ -85,11 +93,23 @@ export default function MyPage() {
     return false;
   });
 
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortOption === 'latest') {
+      return new Date(b.createdAt) - new Date(a.createdAt); // 최근 등록 순
+    }
+    if (sortOption === 'price_asc') {
+      return a.price - b.price; // 가격 낮은 순
+    }
+    if (sortOption === 'price_desc') {
+      return b.price - a.price; // 가격 높은 순
+    }
+    return 0;
+  });
+
   return (
     <section className="mypage">
       <h1 className="mypage__title">마이페이지</h1>
       
-{/* 닉네임 수정 모달 오픈과 함께 회원 탈퇴 함수를 prop으로 전달합니다 */}
       <ProfileSection 
         profile={profile} 
         loading={loading} 
@@ -99,14 +119,36 @@ export default function MyPage() {
       
       <TabMenu activeTab={activeTab} onChange={setActiveTab} />
 
+{/* 정렬 그룹을 툴바 컨테이너로 감싸줍니다 */}
+<div className="mypage__toolbar">
+  <span className="mypage__product-count">
+    총 {filteredProducts.length}개
+  </span>
+  
+  <div className="product-list__sort-group">
+    {SORT_OPTIONS.map((option) => (
+      <button
+        key={option.id}
+        type="button"
+        className={[
+          'product-list__sort-btn',
+          sortOption === option.id ? 'product-list__sort-btn--active' : ''
+        ].join(' ').trim()}
+        onClick={() => setSortOption(option.id)}
+      >
+        {option.label}
+      </button>
+    ))}
+  </div>
+</div>
       <div className="mypage__list">
         {loading ? (
           <div className="mypage__list-empty">로딩 중...</div>
-        ) : filteredProducts.length === 0 ? (
-          <div className="mypage__list-empty"> 상품이 없습니다.</div>
+        ) : sortedProducts.length === 0 ? (
+          <div className="mypage__list-empty">상품이 없습니다.</div>
         ) : (
           <div className="mypage__product-grid">
-            {filteredProducts.map((product) => (
+            {sortedProducts.map((product) => (
               <ProductCard 
                 key={product.productId || product.id} 
                 product={{
