@@ -96,7 +96,10 @@ export default function ProductDetail() {
 
       <div className="product-detail__comments">
         <div className="product-detail__comments-header">
-          <h2>댓글 문의</h2>
+          <div className="product-detail__comments-title-row">
+            <h2>댓글 문의</h2>
+            <span>{comments.length}개</span>
+          </div>
           <p>실시간 채팅 대신 댓글로 구매 의사를 남길 수 있습니다.</p>
         </div>
 
