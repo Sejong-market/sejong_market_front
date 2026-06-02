@@ -5,7 +5,7 @@ import ProductList from './pages/ProductList/ProductList'
 import MyPage from './pages/MyPage/MyPage'
 import ProductRegister from './pages/ProductRegister/ProductRegister' 
 import ProductDetail from './pages/ProductDetail/ProductDetail'
-import ProtectedRoute from './shared/components/ProtectedRoute' // 1. ProtectedRoute 임포트
+import ProtectedRoute from './shared/components/ProtectedRoute' 
 
 export default function App() {
   return (
@@ -22,7 +22,8 @@ export default function App() {
         {/* 🔒 로그인한 사용자만 접근 가능한 페이지 그룹 */}
         <Route element={<ProtectedRoute />}>
           <Route path="/products/new" element={<ProductRegister />} />
-          <Route path="/mypag" element={<MyPage />} />
+          <Route path="/Mypage" element={<MyPage />} />
+
         </Route>
       </Route>
 
