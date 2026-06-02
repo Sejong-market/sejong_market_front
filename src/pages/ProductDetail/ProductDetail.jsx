@@ -1,104 +1,155 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { MOCK_PRODUCTS } from '../ProductList/constants/productConstants'
 import CommentList from './components/CommentList'
 import CommentForm from './components/CommentForm'
+import { createProductComment, fetchProductDetail } from './api'
 import './ProductDetail.css'
 
-const COMMENT_SAMPLES = [
-  { writer: '구매자A', content: '아직 판매 중인가요?' },
-  { writer: '판매자', content: '네, 아직 판매 중입니다.' },
-  { writer: '구매자B', content: '오늘 교내에서 거래 가능할까요?' },
-  { writer: '판매자', content: '네, 대양홀 앞에서 가능합니다.' },
-  { writer: '구매자C', content: '상태 사진을 조금 더 볼 수 있을까요?' },
-]
-
-function getCommentStorageKey(productId) {
-  return `product_comments_${productId}`
+const STATUS_LABEL = {
+  FOR_SALE: '판매중',
+  RESERVED: '예약중',
+  SOLD_OUT: '판매완료',
+  판매중: '판매중',
+  예약중: '예약중',
+  판매완료: '판매완료',
 }
 
-function createInitialComments(count) {
-  return Array.from({ length: count }, (_, index) => {
-    const sample = COMMENT_SAMPLES[index % COMMENT_SAMPLES.length]
+function formatDateTime(value) {
+  if (!value) return ''
 
-    return {
-      id: index + 1,
-      writer: sample.writer,
-      content: sample.content,
-      createdAt: index === 0 ? '방금 전' : `${index}시간 전`,
-    }
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return value
+  }
+
+  return date.toLocaleString('ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
-function loadComments(product) {
-  const storageKey = getCommentStorageKey(product.id)
-  const savedComments = localStorage.getItem(storageKey)
-  const initialCount = product.commentCount ?? 0
-
-  if (savedComments) {
-    try {
-      const parsedComments = JSON.parse(savedComments)
-
-      if (Array.isArray(parsedComments)) {
-        if (parsedComments.length > 0 || initialCount === 0) {
-          return parsedComments
-        }
-      }
-    } catch {
-      return createInitialComments(initialCount)
-    }
+function normalizeComment(comment) {
+  return {
+    id: comment.commentId,
+    writer: comment.writerNickname,
+    content: comment.content,
+    createdAt: formatDateTime(comment.createdAt),
+    isMine: comment.isMine,
   }
-
-  return createInitialComments(initialCount)
 }
 
+function normalizeProduct(product) {
+  return {
+    id: product.productId,
+    title: product.title,
+    content: product.content,
+    price: product.price,
+    status: STATUS_LABEL[product.status] ?? product.status,
+    image: product.imageUrl,
+    seller: product.seller?.nickname ?? '판매자',
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+    isMine: product.isMine,
+    commentCount: product.commentCount ?? product.comments?.length ?? 0,
+    comments: product.comments?.map(normalizeComment) ?? [],
+  }
+}
 
 export default function ProductDetail() {
   const { productId } = useParams()
+
+  const [product, setProduct] = useState(null)
   const [comments, setComments] = useState([])
-  const [isCommentLoaded, setIsCommentLoaded] = useState(false)
-  
-  const product = useMemo(() => {
-    return MOCK_PRODUCTS.find((item) => item.id === Number(productId))
-  }, [productId])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!product) return
+    async function loadProductDetail() {
+      setLoading(true)
+      setError('')
 
-    
-    setIsCommentLoaded(false)
-    setComments(loadComments(product))
-    setIsCommentLoaded(true)
+      try {
+        const data = await fetchProductDetail(productId)
+        const normalizedProduct = normalizeProduct(data)
 
-  }, [product])
+        setProduct(normalizedProduct)
+        setComments(normalizedProduct.comments)
+      } catch (err) {
+        const status = err?.status
 
-  useEffect(() => {
-    if (!product || !isCommentLoaded) return
+        if (status === 400) {
+          setProduct(null)
+          setError('상품을 찾을 수 없습니다.')
+          return
+        }
 
-    localStorage.setItem(
-      getCommentStorageKey(product.id),
-      JSON.stringify(comments)
-    )
-  }, [comments, product, isCommentLoaded])
+        if (err?.message === 'Failed to fetch') {
+          setError('서버에 연결할 수 없습니다. 백엔드 서버 실행 여부를 확인해주세요.')
+          return
+        }
 
-  function handleAddComment(content) {
-    const newComment = {
-      id: Date.now(),
-      writer: '나',
-      content,
-      createdAt: '방금 전',
+        setError(err?.message || '상품 정보를 불러오지 못했습니다.')
+      } finally {
+        setLoading(false)
+      }
     }
 
-    setComments((prevComments) => [...prevComments, newComment])
+    loadProductDetail()
+  }, [productId])
+
+  async function handleAddComment(content) {
+    try {
+      const newComment = await createProductComment(productId, content)
+      const normalizedComment = normalizeComment(newComment)
+
+      setComments((prevComments) => [...prevComments, normalizedComment])
+      setProduct((prevProduct) =>
+        prevProduct
+          ? {
+              ...prevProduct,
+              commentCount: prevProduct.commentCount + 1,
+            }
+          : prevProduct
+      )
+    } catch (err) {
+      const status = err?.status
+
+      if (status === 401 || status === 403) {
+        throw new Error('댓글 작성은 로그인 후 이용할 수 있습니다.')
+      }
+
+      if (status === 400) {
+        throw new Error('댓글 내용을 확인해주세요.')
+      }
+
+      if (err?.message === 'Failed to fetch') {
+        throw new Error('서버에 연결할 수 없습니다. 백엔드 서버 실행 여부를 확인해주세요.')
+      }
+
+      throw new Error(err?.message || '댓글 등록에 실패했습니다.')
+    }
   }
 
-
-  if (!product) {
+  if (loading) {
     return (
       <section className="product-detail">
         <div className="product-detail__not-found">
-          <h1>상품을 찾을 수 없습니다.</h1>
-          <p>존재하지 않거나 삭제된 상품입니다.</p>
+          <h1>상품 정보를 불러오는 중입니다.</h1>
+          <p>잠시만 기다려주세요.</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (error && !product) {
+    return (
+      <section className="product-detail">
+        <div className="product-detail__not-found">
+          <h1>{error}</h1>
+          <p>존재하지 않거나 삭제된 상품일 수 있습니다.</p>
           <Link to="/products" className="product-detail__back-link">
             ← 상품 목록으로 돌아가기
           </Link>
@@ -117,11 +168,17 @@ export default function ProductDetail() {
 
       <div className="product-detail__card">
         <div className="product-detail__image-wrap">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="product-detail__image"
-          />
+          {product.image ? (
+            <img
+              src={product.image}
+              alt={product.title}
+              className="product-detail__image"
+            />
+          ) : (
+            <div className="product-detail__image-placeholder">
+              이미지 없음
+            </div>
+          )}
         </div>
 
         <div className="product-detail__info">
@@ -131,14 +188,15 @@ export default function ProductDetail() {
             {product.price.toLocaleString()}원
           </p>
 
-
           <div className="product-detail__meta">
-            <span>판매자 {product.seller ?? '판매자'}</span>
-            <span>{product.location ?? '세종대학교'}</span>
+            <span>판매자 {product.seller}</span>
+            {product.updatedAt && (
+              <span>수정일 {formatDateTime(product.updatedAt)}</span>
+            )}
           </div>
 
           <p className="product-detail__content">
-            {product.content ?? '등록된 상품 설명이 없습니다.'}
+            {product.content || '등록된 상품 설명이 없습니다.'}
           </p>
         </div>
       </div>

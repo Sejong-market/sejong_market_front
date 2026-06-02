@@ -10,10 +10,18 @@ export default function CommentList({ comments }) {
   return (
     <ul className="comment-list">
       {comments.map((comment) => (
-        <li key={comment.id} className="comment-list__item">
+        <li
+          key={comment.id}
+          className={`comment-list__item ${
+            comment.isMine ? 'comment-list__item--mine' : ''
+          }`}
+        >
           <div className="comment-list__top">
-            <strong>{comment.writer}</strong>
-            <span>{comment.createdAt}</span>
+            <div className="comment-list__writer">
+              <strong>{comment.writer}</strong>
+              {comment.isMine && <span>내 댓글</span>}
+            </div>
+            <time>{comment.createdAt}</time>
           </div>
           <p>{comment.content}</p>
         </li>

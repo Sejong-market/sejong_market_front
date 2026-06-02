@@ -244,3 +244,54 @@
   margin: 0 0 1.5rem;
   color: #6b7280;
 }
+
+.product-detail__image-placeholder {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 24rem;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  font-weight: 700;
+}
+
+.comment-form__field {
+  flex: 1;
+}
+
+.comment-form__error {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+.comment-form__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.comment-list__writer {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.comment-list__writer span {
+  border-radius: 999px;
+  background-color: #fff5f5;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #9a1c1f;
+}
+
+.comment-list__top time {
+  color: #9ca3af;
+}
+
+.comment-list__item--mine {
+  border: 1px solid #fecaca;
+  background-color: #fffafa;
+}
