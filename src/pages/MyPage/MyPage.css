@@ -1,3 +1,4 @@
+/* 마이페이지 레이아웃 */
 .mypage {
   display: flex;
   flex-direction: column;
@@ -26,34 +27,7 @@
   color: #6b7280;
 }
 
-.mypage__list-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
-  background-color: #fff;
-  padding: 0.75rem 1rem;
-}
-
-.mypage__list-item-title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #111827;
-}
-
-.mypage__list-item-price {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #374151;
-}
-
-.profile-section__loading,
-.profile-section__empty {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
+/* 프로필 섹션 */
 .profile-section {
   display: flex;
   align-items: center;
@@ -64,6 +38,16 @@
   padding: 1.25rem;
 }
 
+.profile-section__loading,
+.profile-section__empty {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.profile-section__info {
+  flex: 1; 
+}
+
 .profile-section__avatar {
   display: flex;
   width: 4rem;
@@ -71,10 +55,10 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  background-color: #d1fae5;
+  background-color: #ffe6e5;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #047857;
+  color: #9A1C1F;
 }
 
 .profile-section__name {
@@ -88,34 +72,243 @@
   color: #6b7280;
 }
 
-.profile-section__department {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #9ca3af;
+/* 프로필 액션 버튼 그룹 */
+.profile-section__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
+.profile-section__edit-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #9A1C1F;
+  background-color: #ffffff;
+  border: 1px solid #9A1C1F;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-section__edit-btn:hover {
+  background-color: #ffe6e5;
+}
+
+.profile-section__delete-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.profile-section__delete-btn:hover {
+  color: #6b7280;
+}
+
+/* 탭 메뉴 */
 .tab-menu {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .tab-menu__button {
-  border: none;
-  background: none;
   padding: 0.5rem 1rem;
+  background: none;
+  border: none;
   font-size: 0.875rem;
-  font-weight: 500;
   color: #6b7280;
   cursor: pointer;
-  transition: color 0.15s;
-}
-
-.tab-menu__button:hover {
-  color: #374151;
 }
 
 .tab-menu__button--active {
-  border-bottom: 2px solid #059669;
-  color: #047857;
+  color: #9A1C1F;
+  font-weight: 600;
+  border-bottom: 2px solid #9A1C1F;
+}
+
+/* 정렬 툴바 및 그리드 */
+.mypage__toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mypage__product-count {
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.product-list__sort-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.product-list__sort-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.product-list__sort-btn:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 10px;
+  background-color: #d1d5db;
+}
+
+.product-list__sort-btn:hover {
+  color: #374151;
+}
+
+.product-list__sort-btn--active {
+  color: #9A1C1F;
+  font-weight: 700;
+}
+
+.mypage__product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* 하단 고정 등록 버튼 (FAB) */
+.mypage__fab {
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: #9A1C1F;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.mypage__fab:hover {
+  background-color: #7D1417;
+  transform: scale(1.05);
+}
+
+/* 회원정보 수정 모달 */
+.profile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.profile-modal {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 24rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.profile-modal__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.profile-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.profile-modal__field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.profile-modal__field input {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.profile-modal__field input:focus {
+  border-color: #9A1C1F;
+}
+
+.profile-modal__error {
+  color: #ff3b30;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.profile-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.profile-modal__btn {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.profile-modal__btn--cancel {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.profile-modal__btn--cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.profile-modal__btn--submit {
+  background-color: #9A1C1F;
+  color: #ffffff;
+}
+
+.profile-modal__btn--submit:hover {
+  background-color: #7D1417;
 }
