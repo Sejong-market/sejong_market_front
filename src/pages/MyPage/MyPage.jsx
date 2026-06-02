@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 //import { fetchMyProfile, fetchMyProducts } from './api';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
 import ProductCard from '../ProductList/components/ProductCard';
+import ProfileEditModal from './components/ProfileEditModal';
 import { MOCK_PROFILE, MOCK_PRODUCTS } from './MockData.js'; // 분리한 더미 데이터 임포트
 import './MyPage.css';
 
@@ -13,29 +14,31 @@ export default function MyPage() {
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('all'); // 기본 탭을 다시 'all'로 복구
   const [loading, setLoading] = useState(true);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    // try {
+    //   const [profileRes, productsRes] = await Promise.all([
+    //     fetchMyProfile(),
+    //     fetchMyProducts({ page: 0, size: 10 }),
+    //   ]);
+    //   
+    //   setProfile(profileRes?.data ?? profileRes);
+    //   setProducts(productsRes?.data?.content ?? productsRes?.content ?? []);
+    // } catch {
+     // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
+      setProfile(MOCK_PROFILE);
+      setProducts(MOCK_PRODUCTS);
+    //} finally {
+    setLoading(false);
+   // }
+  }, []);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      // try {
-      //   const [profileRes, productsRes] = await Promise.all([
-      //     fetchMyProfile(),
-      //     fetchMyProducts({ page: 0, size: 10 }),
-      //   ]);
-      //   
-      //   setProfile(profileRes?.data ?? profileRes);
-      //   setProducts(productsRes?.data?.content ?? productsRes?.content ?? []);
-      // } catch {
-       // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
-        setProfile(MOCK_PROFILE);
-        setProducts(MOCK_PRODUCTS);
-      //} finally {
-      setLoading(false);
-     // }
-    };
-    
-    loadData();
-  }, []);
+    const timeoutId = setTimeout(loadData, 0);
+    return () => clearTimeout(timeoutId);
+  }, [loadData]);
 
   // 탭 상태에 따른 상품 필터링 (전체 탭 조건 추가)
   const filteredProducts = products.filter((p) => {
@@ -56,7 +59,11 @@ export default function MyPage() {
     <section className="mypage">
       <h1 className="mypage__title">마이페이지</h1>
       
-      <ProfileSection profile={profile} loading={loading} />
+      <ProfileSection 
+        profile={profile} 
+        loading={loading} 
+        onEditClick={() => setIsEditModalOpen(true)}
+      />
       <TabMenu activeTab={activeTab} onChange={setActiveTab} />
 
       <div className="mypage__list">
@@ -65,7 +72,7 @@ export default function MyPage() {
         ) : filteredProducts.length === 0 ? (
           <div className="mypage__list-empty"> 상품이 없습니다.</div>
         ) : (
-          <div className="my-page__product-grid">
+          <div className="mypage__product-grid">
             {filteredProducts.map((product) => (
               <ProductCard 
                 key={product.productId || product.id} 
@@ -94,6 +101,14 @@ export default function MyPage() {
         <line x1="3" y1="12" x2="21" y2="12"></line>
       </svg>
       </button>
+
+      {/* 정보 수정 모달 */}
+      <ProfileEditModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        currentNickname={profile?.nickname || ''}
+        onRefresh={loadData}
+      />
     </section>
   );
 }
