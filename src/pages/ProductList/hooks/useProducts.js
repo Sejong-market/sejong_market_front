@@ -12,15 +12,19 @@ export function useProducts() {
   const getFilteredData = useCallback(async (keyword = "") => {
     try {
       const params = keyword ? { search: keyword } : {};
-      const data = await fetchProducts(params);
-      return data?.items ?? data ?? [];
+      const response = await fetchProducts(params);
+
+      const data = response?.data ?? response;
+      return data?.content ?? [];
     } catch {
+      let list = MOCK_PRODUCTS.filter(product => product.status !== 'SOLD_OUT');
+      
       if (keyword) {
-        return MOCK_PRODUCTS.filter((product) =>
+        list = list.filter((product) =>
           product.title.toLowerCase().includes(keyword.toLowerCase())
         );
       }
-      return MOCK_PRODUCTS;
+      return list;
     }
   }, []);
 

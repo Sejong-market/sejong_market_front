@@ -209,4 +209,4 @@
 
 .status--selling { background-color: #e6f4ea; color: #137333; }
 .status--reserved { background-color: #fff0e2; color: #b06000; }
-.status--completed { background-color: #fce8e6; color: #c5221f; }
+.status--sold-out { background-color: #fce8e6; color: #c5221f; }
