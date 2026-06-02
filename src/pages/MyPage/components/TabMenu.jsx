@@ -2,7 +2,7 @@ const TABS = [
   { id: 'all', label: '전체' }, 
   { id: 'selling', label: '판매 중' },
   { id: 'sold', label: '판매 완료' },
-  { id: 'purchased', label: '구매 내역' },
+  { id: 'reserved', label: '예약중' },
 ]
 
 export default function TabMenu({ activeTab, onChange }) {

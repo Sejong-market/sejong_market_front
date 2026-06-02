@@ -1,50 +1,53 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMyProfile, fetchMyProducts } from './api';
+//import { fetchMyProfile, fetchMyProducts } from './api';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
 import ProductCard from '../ProductList/components/ProductCard';
-import { MOCK_PROFILE, MOCK_PRODUCTS } from './mockData'; // 분리한 더미 데이터 임포트
+import { MOCK_PROFILE, MOCK_PRODUCTS } from './MockData.js'; // 분리한 더미 데이터 임포트
 import './MyPage.css';
 
 export default function MyPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState('all'); // 기본 탭을 다시 'all'로 복구
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      try {
-        const [profileRes, productsRes] = await Promise.all([
-          fetchMyProfile(),
-          fetchMyProducts({ page: 0, size: 10 }),
-        ]);
-        
-        setProfile(profileRes?.data ?? profileRes);
-        setProducts(productsRes?.data?.content ?? productsRes?.content ?? []);
-      } catch {
-        console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
+      // try {
+      //   const [profileRes, productsRes] = await Promise.all([
+      //     fetchMyProfile(),
+      //     fetchMyProducts({ page: 0, size: 10 }),
+      //   ]);
+      //   
+      //   setProfile(profileRes?.data ?? profileRes);
+      //   setProducts(productsRes?.data?.content ?? productsRes?.content ?? []);
+      // } catch {
+       // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
         setProfile(MOCK_PROFILE);
         setProducts(MOCK_PRODUCTS);
-      } finally {
-        setLoading(false);
-      }
+      //} finally {
+      setLoading(false);
+     // }
     };
     
     loadData();
   }, []);
 
-  // 탭 상태에 따른 상품 필터링 (영문, 한글 상태값 모두 호환되도록 처리)
+  // 탭 상태에 따른 상품 필터링 (전체 탭 조건 추가)
   const filteredProducts = products.filter((p) => {
     if (activeTab === 'all') return true;
     if (activeTab === 'selling') {
-      return p.status === 'FOR_SALE' || p.status === 'RESERVED' || p.status === '판매중' || p.status === '예약중';
+      return p.status === 'FOR_SALE' || p.status === '판매중';
     }
     if (activeTab === 'sold') {
       return p.status === 'SOLD_OUT' || p.status === '판매완료';
+    }
+    if (activeTab === 'reserved') {
+      return p.status === 'RESERVED' || p.status === '예약중';
     }
     return false;
   });
@@ -60,7 +63,7 @@ export default function MyPage() {
         {loading ? (
           <div className="mypage__list-empty">로딩 중...</div>
         ) : filteredProducts.length === 0 ? (
-          <div className="mypage__list-empty">해당하는 상품이 없습니다.</div>
+          <div className="mypage__list-empty"> 상품이 없습니다.</div>
         ) : (
           <div className="my-page__product-grid">
             {filteredProducts.map((product) => (
@@ -70,7 +73,8 @@ export default function MyPage() {
                   ...product,
                   id: product.productId || product.id,
                   image: product.imageUrl || product.image,
-                  status: product.status === 'FOR_SALE' || product.status === '판매중' ? '판매중' : '판매완료'
+                  status: product.status === 'FOR_SALE' || product.status === '판매중' ? '판매중' : 
+                          product.status === 'RESERVED' || product.status === '예약중' ? '예약중' : '판매완료'
                 }}
               />
             ))}
