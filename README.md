@@ -2,6 +2,20 @@
 
 세종대학교 캠퍼스 내 학생·교직원을 위한 중고거래 서비스 프론트엔드 저장소입니다.
 
+## 🔎 실시간 미리보기 (Live Preview)
+
+`development` 브랜치에 변경이 머지되면 GitHub Actions가 자동으로 빌드하여 GitHub Pages에 배포합니다.
+별도 서버 없이 최신 UI 상태를 누구나 바로 확인할 수 있습니다.
+
+| 항목 | 값 |
+|------|----|
+| 미리보기 URL | https://sejong-market.github.io/sejong_market_front/ |
+| 기준 브랜치 | `development` (push 시 자동 배포) |
+| 배포 산출물 브랜치 | `gh-pages` (CI 전용 — **사람은 절대 수정·push 금지**) |
+| 워크플로우 | `.github/workflows/deploy-pages.yml` |
+
+> 새 PR이 `development`에 머지되는 순간부터 보통 1~2분 안에 위 URL이 갱신됩니다.
+
 ## 기술 스택
 
 | 구분 | 기술 |
