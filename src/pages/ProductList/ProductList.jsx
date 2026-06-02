@@ -25,6 +25,26 @@ function getStoredCommentCount(productId) {
   }
 }
 
+function getStoredLikeCount(productId) {
+  const savedLike = localStorage.getItem(`product_like_${productId}`)
+
+  if (!savedLike) {
+    return null
+  }
+
+  try {
+    const parsedLike = JSON.parse(savedLike)
+
+    if (typeof parsedLike.likeCount !== 'number') {
+      return null
+    }
+
+    return parsedLike.likeCount
+  } catch {
+    return null
+  }
+}
+
 export default function ProductList() {
   const navigate = useNavigate();
   const {
@@ -40,14 +60,16 @@ export default function ProductList() {
 
   const productsWithCommentCounts = useMemo(() => {
   return sortedProducts.map((product) => {
-    const storedCommentCount = getStoredCommentCount(product.id);
+    const storedCommentCount = getStoredCommentCount(product.id)
+    const storedLikeCount = getStoredLikeCount(product.id)
 
     return {
       ...product,
       commentCount: storedCommentCount ?? product.commentCount,
-    };
-  });
-}, [sortedProducts]);
+      likeCount: storedLikeCount ?? product.likeCount,
+    }
+  })
+}, [sortedProducts])
 
   return (
     <section>
