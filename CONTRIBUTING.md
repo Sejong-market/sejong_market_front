@@ -29,6 +29,11 @@
 | `master` | 배포 가능한 안정 버전 | ❌ (파트장·팀장만, 릴리스 시) |
 | `develop` | 통합 개발 브랜치 | ❌ **엄격히 금지** |
 | `feature/*` | 기능·페이지 단위 작업 | ✅ (본인 feature 브랜치만) |
+| `gh-pages` | GitHub Pages 미리보기 산출물 | ❌ **CI 전용 — 사람은 절대 수정 금지** |
+
+> `gh-pages`는 GitHub Actions(`deploy-pages.yml`)가 통합 개발 브랜치의 빌드 결과물을
+> 자동으로 강제 갱신하는 **배포 아티팩트 브랜치**입니다. 사람이 직접 push 하거나
+> checkout 후 편집하면 다음 자동 배포 시 모두 덮어써집니다. 절대 작업 브랜치로 쓰지 마세요.
 
 ### 작업 시작 절차 (필수)
 
@@ -376,6 +381,29 @@ git push origin develop
 | 4 | 컨벤션 없는 커밋 메시지 | `feat:`, `fix:`, `revert:` 등 타입 사용 |
 | 5 | `develop`에서 feature 없이 작업 | 반드시 `feature/기능명` 브랜치 생성 |
 | 6 | 공유 브랜치에 `reset --hard` 후 force push | `git revert` 사용 |
+| 7 | `gh-pages` 브랜치 직접 수정·push | CI가 자동 관리 — 절대 손대지 말 것 |
+
+---
+
+## 7. GitHub Pages 미리보기 배포
+
+`development`에 PR이 머지되면 `.github/workflows/deploy-pages.yml`이 자동으로
+빌드 → `gh-pages` 브랜치 갱신 → 다음 URL에 1~2분 안에 반영합니다.
+
+```
+https://sejong-market.github.io/sejong_market_front/
+```
+
+### 기여자가 알아둘 점
+
+- **건드릴 필요 없음:** 평소 작업 흐름은 동일합니다. `feature/*` → PR → `development` 머지면 끝.
+- **gh-pages 브랜치 금지:** 위 6번-7항과 동일. 직접 push/checkout 후 편집 금지.
+- **base 경로:** GitHub Pages는 서브경로(`/sejong_market_front/`)로 서빙되므로,
+  코드에서 정적 자원 경로는 반드시 **`import.meta.env.BASE_URL`** 또는 Vite가
+  변환해주는 상대 경로(`import logo from '...'`)를 사용하세요. 절대 경로 `/foo.png`는
+  GitHub Pages에서 404가 됩니다.
+- **로컬 빌드 테스트:** 미리보기와 동일한 base로 빌드하려면
+  `DEPLOY_TARGET=gh-pages npm run build` 후 `npm run preview`.
 
 ---
 
