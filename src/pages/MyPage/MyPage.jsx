@@ -1,18 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import { fetchMyProfile, fetchMyProducts } from './api';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
-import { MOCK_PROFILE, MOCK_PRODUCTS } from './MockData.js'; // 분리한 더미 데이터 임포트
+import { MOCK_PROFILE, MOCK_PRODUCTS } from './MockData.js';
 import './MyPage.css';
 
 export default function MyPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
-  const [activeTab, setActiveTab] = useState('all'); // 기본 탭을 다시 'all'로 복구
+  const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -30,15 +29,46 @@ export default function MyPage() {
      // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
       setProfile(MOCK_PROFILE);
       setProducts(MOCK_PRODUCTS);
-    //} finally {
+    //} 
     setLoading(false);
-   // }
   }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(loadData, 0);
     return () => clearTimeout(timeoutId);
   }, [loadData]);
+
+  const handleDeleteAccount = async () => {
+    const isConfirmed = window.confirm("정말 탈퇴하시겠습니까? 현재 계정의 모든 정보가 영구 삭제됩니다.");
+    if (!isConfirmed) return;
+
+    try {
+      const response = await fetch('/api/users/mypage', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // 만약 프로젝트 공통 인증 헤더(예: Bearer Token)를 사용 중이라면 여기에 추가해 주세요.
+        }
+      });
+
+      if (response.ok) { // 200 OK
+        alert("회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.");
+        
+        // 로컬 스토리지에 저장된 인증 토큰 등이 있다면 여기서 제거합니다.
+        // localStorage.removeItem('accessToken'); 
+
+        navigate('/login'); // 로그인 화면으로 이동
+      } else if (response.status === 401) { // 401 Unauthorized
+        alert("인증 자격이 유효하지 않습니다. 다시 로그인 후 시도해 주세요.");
+        navigate('/login');
+      } else {
+        alert("회원 탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      }
+    } catch (error) {
+      console.error("회원 탈퇴 요청 실패:", error);
+      alert("네트워크 오류가 발생했습니다.");
+    }
+  };
 
   // 탭 상태에 따른 상품 필터링 (전체 탭 조건 추가)
   const filteredProducts = products.filter((p) => {
@@ -59,11 +89,14 @@ export default function MyPage() {
     <section className="mypage">
       <h1 className="mypage__title">마이페이지</h1>
       
+{/* 닉네임 수정 모달 오픈과 함께 회원 탈퇴 함수를 prop으로 전달합니다 */}
       <ProfileSection 
         profile={profile} 
         loading={loading} 
-        onEditClick={() => setIsEditModalOpen(true)}
+        onEditClick={() => setIsEditModalOpen(true)} 
+        onDeleteAccount={handleDeleteAccount} 
       />
+      
       <TabMenu activeTab={activeTab} onChange={setActiveTab} />
 
       <div className="mypage__list">

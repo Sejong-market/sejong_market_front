@@ -265,3 +265,28 @@
 .profile-modal__btn--submit:hover {
   background-color: #7D1417;
 }
+
+/* 정보수정 버튼과 탈퇴 버튼을 감싸는 컨테이너 스타일 */
+.profile-section__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* 오른쪽 정렬 (기존 레이아웃 방향 유지) */
+  gap: 0.5rem;          /* 두 버튼 사이의 간격 */
+}
+
+/* 회원 탈퇴 버튼 스타일 (작은 회색 글씨) */
+.profile-section__delete-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 0.75rem;     /* 작은 글씨 크기 */
+  color: #9ca3af;         /* 연한 회색 (gray-400 대용) */
+  text-decoration: underline; /* 클릭 가능한 링크 느낌을 주기 위한 밑줄 추가 */
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* 마우스 호버 시 가독성을 위해 살짝 진해지도록 처리 */
+.profile-section__delete-btn:hover {
+  color: #6b7280;         /* 조금 더 어두운 회색 (gray-500) */
+}
