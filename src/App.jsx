@@ -3,8 +3,8 @@ import AppLayout from './shared/layout/AppLayout'
 import Login from './pages/Login/Login'
 import ProductList from './pages/ProductList/ProductList'
 import MyPage from './pages/MyPage/MyPage'
-import Chat from './pages/Chat/Chat'
 import ProductRegister from './pages/ProductRegister/ProductRegister' 
+import ProductDetail from './pages/ProductDetail/ProductDetail'
 
 export default function App() {
   return (
@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/products" element={<ProductList />} />
         <Route path="/products/new" element={<ProductRegister />} />
         <Route path="/mypage" element={<MyPage />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/products/:productId" element={<ProductDetail />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/products" replace />} />

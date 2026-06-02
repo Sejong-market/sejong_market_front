@@ -3,7 +3,6 @@ import sejongLogo from "../../assets/sejong_logo.png";
 
 const navItems = [
   { to: "/products", label: "상품" },
-  { to: "/chat", label: "채팅" },
   { to: "/mypage", label: "마이페이지" },
 ];
 
