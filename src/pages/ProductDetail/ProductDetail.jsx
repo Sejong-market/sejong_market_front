@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import CommentList from './components/CommentList'
 import CommentForm from './components/CommentForm'
 import './ProductDetail.css'
@@ -63,6 +63,12 @@ export default function ProductDetail() {
 
   return (
     <section className="product-detail">
+      <div className="product-detail__top">
+        <Link to="/products" className="product-detail__back-link">
+          ← 상품 목록으로 돌아가기
+        </Link>
+      </div>
+
       <div className="product-detail__card">
         <div className="product-detail__image-wrap">
           <img

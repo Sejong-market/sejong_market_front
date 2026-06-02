@@ -3,6 +3,24 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+.product-detail__top {
+  display: flex;
+  align-items: center;
+}
+
+.product-detail__back-link {
+  display: inline-flex;
+  align-items: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.product-detail__back-link:hover {
+  color: #9a1c1f;
+}
 
 .product-detail__card {
   display: grid;
