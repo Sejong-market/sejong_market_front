@@ -33,7 +33,7 @@ function createInitialComments(count) {
 function loadComments(product) {
   const storageKey = getCommentStorageKey(product.id)
   const savedComments = localStorage.getItem(storageKey)
-  const initialCount = product.chatCount ?? 0
+  const initialCount = product.commentCount ?? 0
 
   if (savedComments) {
     try {

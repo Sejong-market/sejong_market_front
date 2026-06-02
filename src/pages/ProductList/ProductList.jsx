@@ -39,15 +39,15 @@ export default function ProductList() {
   } = useProducts();
 
   const productsWithCommentCounts = useMemo(() => {
-    return sortedProducts.map((product) => {
-      const storedCommentCount = getStoredCommentCount(product.id);
+  return sortedProducts.map((product) => {
+    const storedCommentCount = getStoredCommentCount(product.id);
 
-      return {
-        ...product,
-        chatCount: storedCommentCount ?? product.chatCount,
-      };
-    });
-  }, [sortedProducts]);
+    return {
+      ...product,
+      commentCount: storedCommentCount ?? product.commentCount,
+    };
+  });
+}, [sortedProducts]);
 
   return (
     <section>
