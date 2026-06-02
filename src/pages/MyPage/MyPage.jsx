@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchMyProfile, fetchMyProducts } from './api';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
@@ -7,6 +8,7 @@ import { MOCK_PROFILE, MOCK_PRODUCTS } from './mockData'; // 분리한 더미 �
 import './MyPage.css';
 
 export default function MyPage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
@@ -34,14 +36,6 @@ export default function MyPage() {
     
     loadData();
   }, []);
-
-  // API의 영문 상태값을 ProductCard용 한글 상태값으로 변환 (더미데이터의 한글은 그대로 통과)
-  const getKoreanStatus = (status) => {
-    if (status === 'FOR_SALE') return '판매중';
-    if (status === 'RESERVED') return '예약중';
-    if (status === 'SOLD_OUT') return '판매완료';
-    return status;
-  };
 
   // 탭 상태에 따른 상품 필터링 (영문, 한글 상태값 모두 호환되도록 처리)
   const filteredProducts = products.filter((p) => {
@@ -75,14 +69,27 @@ export default function MyPage() {
                 product={{
                   ...product,
                   id: product.productId || product.id,
-                  image: product.imageUrl || product.image, // 실제 API의 imageUrl과 더미데이터의 image 호환
-                  status: getKoreanStatus(product.status) 
-                }} 
+                  image: product.imageUrl || product.image,
+                  status: product.status === 'FOR_SALE' || product.status === '판매중' ? '판매중' : '판매완료'
+                }}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* 우측 하단 플로팅 상품 등록 버튼 */}
+      <button 
+        type="button" 
+        className="mypage__fab" 
+        onClick={() => navigate('/products/new')}
+        aria-label="상품 등록"
+      >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+        <line x1="12" y1="3" x2="12" y2="21"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+      </svg>
+      </button>
     </section>
   );
 }

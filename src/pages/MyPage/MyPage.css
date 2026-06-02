@@ -97,42 +97,53 @@
 
 .tab-menu {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .tab-menu__button {
-  border: none;
-  background: none;
   padding: 0.5rem 1rem;
+  background: none;
+  border: none;
   font-size: 0.875rem;
-  font-weight: 500;
   color: #6b7280;
   cursor: pointer;
-  transition: color 0.15s;
 }
 
-.tab-menu__button:hover {
-  color: #374151;
-}
-
-/* 탭 메뉴 활성화 상태 밑줄 및 글자색 붉은 톤으로 변경 */
 .tab-menu__button--active {
-  border-bottom: 2px solid #9A1C1F; /* 기존 #059669 에서 변경 */
-  color: #9A1C1F; /* 기존 #047857 에서 변경 */
+  color: #9A1C1F;
+  font-weight: 600;
+  border-bottom: 2px solid #9A1C1F;
 }
 
-/* 마이페이지 내 상품 카드 그리드 레이아웃 */
 .my-page__product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.25rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
-.my-page__empty {
-  text-align: center;
-  padding: 3rem 0;
-  color: #888888;
-  font-size: 1rem;
+/* 우측 하단 고정형 동그라미 + 버튼 스타일 (FAB) */
+.mypage__fab {
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: #9A1C1F; /* 세종대 메인 컬러 테마 적용 */
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* 스크롤 시 다른 요소 위에 배치되도록 설정 */
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+/* 마우스 호버 효과 */
+.mypage__fab:hover {
+  background-color: #7D1417;
+  transform: scale(1.05);
 }
