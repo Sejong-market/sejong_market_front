@@ -121,3 +121,18 @@
   border-bottom: 2px solid #9A1C1F; /* 기존 #059669 에서 변경 */
   color: #9A1C1F; /* 기존 #047857 에서 변경 */
 }
+
+/* 마이페이지 내 상품 카드 그리드 레이아웃 */
+.my-page__product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.my-page__empty {
+  text-align: center;
+  padding: 3rem 0;
+  color: #888888;
+  font-size: 1rem;
+}

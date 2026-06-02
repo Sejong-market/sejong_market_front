@@ -1,4 +1,5 @@
 const TABS = [
+  { id: 'all', label: '전체' }, 
   { id: 'selling', label: '판매 중' },
   { id: 'sold', label: '판매 완료' },
   { id: 'purchased', label: '구매 내역' },
