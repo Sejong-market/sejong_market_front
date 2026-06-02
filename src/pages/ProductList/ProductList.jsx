@@ -1,8 +1,29 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductGrid from "./components/ProductGrid";
 import { useProducts } from "./hooks/useProducts";
 import { SORT_OPTIONS } from "./constants/productConstants";
 import "./ProductList.css";
+
+function getStoredCommentCount(productId) {
+  const savedComments = localStorage.getItem(`product_comments_${productId}`);
+
+  if (!savedComments) {
+    return null;
+  }
+
+  try {
+    const parsedComments = JSON.parse(savedComments);
+
+    if (!Array.isArray(parsedComments)) {
+      return null;
+    }
+
+    return parsedComments.length;
+  } catch {
+    return null;
+  }
+}
 
 export default function ProductList() {
   const navigate = useNavigate();
@@ -15,14 +36,25 @@ export default function ProductList() {
     setSortOption,
     sortedProducts,
     handleSearchSubmit,
-  } = useProducts(); 
+  } = useProducts();
+
+  const productsWithCommentCounts = useMemo(() => {
+    return sortedProducts.map((product) => {
+      const storedCommentCount = getStoredCommentCount(product.id);
+
+      return {
+        ...product,
+        chatCount: storedCommentCount ?? product.chatCount,
+      };
+    });
+  }, [sortedProducts]);
 
   return (
     <section>
       {/* 1. 상단 검색 및 타이틀 헤더 */}
       <div className="product-list__header">
         <h1 className="product-list__title">상품 목록</h1>
-        
+
         <form onSubmit={handleSearchSubmit} className="product-list__search-form">
           <input
             type="text"
@@ -39,9 +71,11 @@ export default function ProductList() {
           </button>
         </form>
 
-        <button type="button" 
-        className="product-list__register-btn" 
-        onClick={() => navigate("/products/new")}>
+        <button
+          type="button"
+          className="product-list__register-btn"
+          onClick={() => navigate("/products/new")}
+        >
           상품 등록
         </button>
       </div>
@@ -63,7 +97,7 @@ export default function ProductList() {
       </div>
 
       {/* 3. 데이터 그리드 피드 */}
-      <ProductGrid products={sortedProducts} loading={loading} error={error} />
+      <ProductGrid products={productsWithCommentCounts} loading={loading} error={error} />
     </section>
   );
 }
