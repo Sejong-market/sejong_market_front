@@ -223,3 +223,24 @@
     flex-direction: column;
   }
 }
+
+.product-detail__not-found {
+  border: 1px solid #e5e7eb;
+  border-radius: 1.25rem;
+  background-color: #fff;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.product-detail__not-found h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.product-detail__not-found p {
+  margin: 0 0 1.5rem;
+  color: #6b7280;
+}

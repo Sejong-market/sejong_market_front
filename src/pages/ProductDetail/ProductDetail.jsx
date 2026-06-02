@@ -1,54 +1,82 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { MOCK_PRODUCTS } from '../ProductList/constants/productConstants'
 import CommentList from './components/CommentList'
 import CommentForm from './components/CommentForm'
 import './ProductDetail.css'
 
-const MOCK_PRODUCTS = [
-  {
-    id: 1,
-    title: '맥북 프로 14인치',
-    content: '상태 좋은 맥북 프로 14인치입니다. 충전기 포함이며 교내 직거래 가능합니다.',
-    price: 1200000,
-    status: '판매중',
-    seller: '세종이',
-    location: '대양홀 앞',
-    image: '/src/assets/products/macbook.png',
-  },
-  {
-    id: 2,
-    title: '아이패드 에어 5세대',
-    content: '필기용으로 사용했습니다. 케이스와 애플펜슬은 별도 문의 주세요.',
-    price: 450000,
-    status: '판매중',
-    seller: '구매자A',
-    location: '학술정보원 앞',
-    image: '/src/assets/products/ipad.png',
-  },
+const COMMENT_SAMPLES = [
+  { writer: '구매자A', content: '아직 판매 중인가요?' },
+  { writer: '판매자', content: '네, 아직 판매 중입니다.' },
+  { writer: '구매자B', content: '오늘 교내에서 거래 가능할까요?' },
+  { writer: '판매자', content: '네, 대양홀 앞에서 가능합니다.' },
+  { writer: '구매자C', content: '상태 사진을 조금 더 볼 수 있을까요?' },
 ]
 
-const INITIAL_COMMENTS = [
-  {
-    id: 1,
-    writer: '구매자A',
-    content: '아직 판매 중인가요?',
-    createdAt: '방금 전',
-  },
-  {
-    id: 2,
-    writer: '판매자',
-    content: '네, 아직 판매 중입니다.',
-    createdAt: '방금 전',
-  },
-]
+function getCommentStorageKey(productId) {
+  return `product_comments_${productId}`
+}
+
+function createInitialComments(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const sample = COMMENT_SAMPLES[index % COMMENT_SAMPLES.length]
+
+    return {
+      id: index + 1,
+      writer: sample.writer,
+      content: sample.content,
+      createdAt: index === 0 ? '방금 전' : `${index}시간 전`,
+    }
+  })
+}
+
+function loadComments(product) {
+  const storageKey = getCommentStorageKey(product.id)
+  const savedComments = localStorage.getItem(storageKey)
+  const initialCount = product.chatCount ?? 0
+
+  if (savedComments) {
+    try {
+      const parsedComments = JSON.parse(savedComments)
+
+      if (Array.isArray(parsedComments)) {
+        if (parsedComments.length > 0 || initialCount === 0) {
+          return parsedComments
+        }
+      }
+    } catch {
+      return createInitialComments(initialCount)
+    }
+  }
+
+  return createInitialComments(initialCount)
+}
 
 export default function ProductDetail() {
   const { productId } = useParams()
-  const [comments, setComments] = useState(INITIAL_COMMENTS)
+  const [comments, setComments] = useState([])
+  const [isCommentLoaded, setIsCommentLoaded] = useState(false)
 
   const product = useMemo(() => {
-    return MOCK_PRODUCTS.find((item) => item.id === Number(productId)) ?? MOCK_PRODUCTS[0]
+    return MOCK_PRODUCTS.find((item) => item.id === Number(productId))
   }, [productId])
+
+  useEffect(() => {
+    if (!product) return
+
+    setIsCommentLoaded(false)
+    setComments(loadComments(product))
+    setIsCommentLoaded(true)
+  }, [product])
+
+  useEffect(() => {
+    if (!product || !isCommentLoaded) return
+
+    localStorage.setItem(
+      getCommentStorageKey(product.id),
+      JSON.stringify(comments)
+    )
+  }, [comments, product, isCommentLoaded])
 
   function handleAddComment(content) {
     const newComment = {
@@ -59,6 +87,20 @@ export default function ProductDetail() {
     }
 
     setComments((prevComments) => [...prevComments, newComment])
+  }
+
+  if (!product) {
+    return (
+      <section className="product-detail">
+        <div className="product-detail__not-found">
+          <h1>상품을 찾을 수 없습니다.</h1>
+          <p>존재하지 않거나 삭제된 상품입니다.</p>
+          <Link to="/products" className="product-detail__back-link">
+            ← 상품 목록으로 돌아가기
+          </Link>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -86,11 +128,13 @@ export default function ProductDetail() {
           </p>
 
           <div className="product-detail__meta">
-            <span>판매자 {product.seller}</span>
-            <span>{product.location}</span>
+            <span>판매자 {product.seller ?? '판매자'}</span>
+            <span>{product.location ?? '세종대학교'}</span>
           </div>
 
-          <p className="product-detail__content">{product.content}</p>
+          <p className="product-detail__content">
+            {product.content ?? '등록된 상품 설명이 없습니다.'}
+          </p>
         </div>
       </div>
 
