@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sejong Market</title>
+    <script>
+      // GitHub Pages SPA 폴백 (rafgraph/spa-github-pages 방식)
+      // /sejong_market_front/products 같은 깊은 경로로 직접 진입하거나 새로고침하면
+      // GitHub Pages가 이 404.html을 반환한다. 여기서 원래 경로를 쿼리스트링으로 인코딩한 뒤
+      // /sejong_market_front/ (index.html)로 리다이렉트시키면, index.html의 인라인 스크립트가
+      // history.replaceState로 원래 경로를 복원한다.
+      //
+      // pathSegmentsToKeep: 저장소 이름(서브경로)인 'sejong_market_front'만큼 유지.
+      var pathSegmentsToKeep = 1
+      var l = window.location
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      )
+    </script>
+  </head>
+  <body></body>
+</html>
