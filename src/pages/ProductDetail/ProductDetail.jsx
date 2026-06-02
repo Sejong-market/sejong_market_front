@@ -52,44 +52,12 @@ function loadComments(product) {
   return createInitialComments(initialCount)
 }
 
-function getLikeStorageKey(productId) {
-  return `product_like_${productId}`
-}
-
-function loadLikeState(product) {
-  const savedLike = localStorage.getItem(getLikeStorageKey(product.id))
-
-  if (savedLike) {
-    try {
-      const parsedLike = JSON.parse(savedLike)
-
-      if (
-        typeof parsedLike.isLiked === 'boolean' &&
-        typeof parsedLike.likeCount === 'number'
-      ) {
-        return parsedLike
-      }
-    } catch {
-      return {
-        isLiked: false,
-        likeCount: product.likeCount ?? 0,
-      }
-    }
-  }
-
-  return {
-    isLiked: false,
-    likeCount: product.likeCount ?? 0,
-  }
-}
 
 export default function ProductDetail() {
   const { productId } = useParams()
   const [comments, setComments] = useState([])
   const [isCommentLoaded, setIsCommentLoaded] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
-  const [likeCount, setLikeCount] = useState(0)
-
+  
   const product = useMemo(() => {
     return MOCK_PRODUCTS.find((item) => item.id === Number(productId))
   }, [productId])
@@ -97,13 +65,10 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!product) return
 
-    const likeState = loadLikeState(product)
     
     setIsCommentLoaded(false)
     setComments(loadComments(product))
     setIsCommentLoaded(true)
-    setIsLiked(likeState.isLiked)
-    setLikeCount(likeState.likeCount)
 
   }, [product])
 
@@ -127,25 +92,6 @@ export default function ProductDetail() {
     setComments((prevComments) => [...prevComments, newComment])
   }
 
-  function handleLikeClick() {
-    if (!product) return
-
-    const nextIsLiked = !isLiked
-    const nextLikeCount = nextIsLiked
-      ? likeCount + 1
-      : Math.max(likeCount - 1, 0)
-
-    setIsLiked(nextIsLiked)
-    setLikeCount(nextLikeCount)
-
-    localStorage.setItem(
-      getLikeStorageKey(product.id),
-      JSON.stringify({
-        isLiked: nextIsLiked,
-        likeCount: nextLikeCount,
-      })
-    )
-  }
 
   if (!product) {
     return (
@@ -185,18 +131,6 @@ export default function ProductDetail() {
             {product.price.toLocaleString()}원
           </p>
 
-          <div className ="product-detail__actions">
-            <button
-              type="button"
-              className={`product-detail__like-button ${
-                isLiked ? 'product-detail__like-button--active' : ''
-              }`}
-              onClick={handleLikeClick}
-            >
-              <span>{isLiked ? '♥' : '♡'}</span>
-              관심 {likeCount}
-            </button>
-          </div>
 
           <div className="product-detail__meta">
             <span>판매자 {product.seller ?? '판매자'}</span>
