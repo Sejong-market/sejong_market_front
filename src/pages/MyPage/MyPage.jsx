@@ -5,7 +5,7 @@ import TabMenu from './components/TabMenu';
 import SortToolbar from './components/SortToolbar'; // 1. 분리한 컴포넌트 import
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
-import { MOCK_PROFILE, MOCK_PRODUCTS } from './MockData.js';
+import { MOCK_PROFILE, MOCK_PRODUCTS } from './mockData.js';
 import './MyPage.css';
 
 export default function MyPage() {
