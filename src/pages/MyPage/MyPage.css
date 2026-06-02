@@ -64,6 +64,7 @@
   padding: 1.25rem;
 }
 
+/* 프로필 아바타(원형) 배경 및 글자색 붉은 톤으로 변경 */
 .profile-section__avatar {
   display: flex;
   width: 4rem;
@@ -71,10 +72,10 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  background-color: #d1fae5;
+  background-color: #ffe6e5; /* 기존 #d1fae5 에서 연한 붉은색으로 변경 */
   font-size: 1.25rem;
   font-weight: 700;
-  color: #047857;
+  color: #9A1C1F; /* 기존 #047857 에서 세종대 붉은색으로 변경 */
 }
 
 .profile-section__name {
@@ -115,7 +116,8 @@
   color: #374151;
 }
 
+/* 탭 메뉴 활성화 상태 밑줄 및 글자색 붉은 톤으로 변경 */
 .tab-menu__button--active {
-  border-bottom: 2px solid #059669;
-  color: #047857;
+  border-bottom: 2px solid #9A1C1F; /* 기존 #059669 에서 변경 */
+  color: #9A1C1F; /* 기존 #047857 에서 변경 */
 }
