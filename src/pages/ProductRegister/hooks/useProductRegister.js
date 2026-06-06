@@ -6,14 +6,14 @@ export default function useProductRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
-    category: '도서',
     price: '0',
-    description: '',
-    status: '판매중',
-    location: '학생회관'
+    content: ''
   });
-  const [customLocation, setCustomLocation] = useState('');
-  const [images, setImages] = useState([]);
+  
+  // 미리보기용 URL과 실제 백엔드에 전송할 파일 객체를 분리 관리합니다.
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [errors, setErrors] = useState({});
@@ -23,32 +23,38 @@ export default function useProductRegister() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
-    if (name === 'location' && errors.customLocation) {
-      setErrors((prev) => ({ ...prev, customLocation: '' }));
-    }
   };
 
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (images.length + files.length > 10) {
-      alert('사진은 최대 10장까지만 등록할 수 있습니다.');
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 10MB 용량 제한 체크
+    if (file.size > 10 * 1024 * 1024) {
+      alert('이미지 용량은 최대 10MB를 초과할 수 없습니다.');
       return;
     }
-    const newUrls = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...newUrls]);
-    e.target.value = '';
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
-  const handleRemoveImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.title.trim()) newErrors.title = '제목을 입력해주세요.';
-    if (!formData.price || formData.price === '0') newErrors.price = '가격을 입력해주세요.';
-    if (formData.location === '직접입력' && !customLocation.trim()) {
-      newErrors.customLocation = '거래 장소를 입력해주세요.';
+    if (!formData.title.trim() || formData.title.length > 100) {
+      newErrors.title = '제목은 필수이며 1~100자 사이여야 합니다.';
+    }
+    const numericPrice = Number(formData.price);
+    if (formData.price === '' || Number.isNaN(numericPrice) || numericPrice < 0) {
+      newErrors.price = '가격은 0 이상의 정수여야 합니다.';
+    }
+    if (formData.content.length > 10000) {
+      newErrors.content = '내용은 10,000자 이내로 입력해주세요.';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -60,19 +66,59 @@ export default function useProductRegister() {
 
     setLoading(true);
     setError('');
+
     try {
-      const finalLocation = formData.location === '직접입력' ? customLocation : formData.location;
-      await createProduct({ ...formData, location: finalLocation, images });
+      // 명세서 규격에 맞추어 Multipart/Form-Data 객체 생성
+      const data = new FormData();
+
+      // 1. request 파트: JSON 데이터를 blob 형태로 추가 및 타입 명시
+      const requestData = {
+        title: formData.title,
+        content: formData.content,
+        price: parseInt(formData.price, 10)
+      };
+      
+      data.append(
+        'request',
+        new Blob([JSON.stringify(requestData)], { type: 'application/json' })
+      );
+
+      // 2. image 파트: 선택된 파일이 있을 경우 파일 객체 추가
+      if (imageFile) {
+        data.append('image', imageFile);
+      }
+
+      await createProduct(data);
+      alert('상품이 성공적으로 등록되었습니다.');
       navigate('/products');
     } catch (err) {
-      setError(err.message || '상품 등록에 실패했습니다.');
+      console.error(err);
+      if (err.response?.status === 413) {
+        setError('이미지 용량이 너무 큽니다. (최대 10MB)');
+      } else if (err.response?.status === 400) {
+        setError('입력하신 정보를 다시 확인해주세요. (유효성 검증 실패)');
+      } else if (err.response?.status === 401 || err.response?.status === 403) {
+        setError('인증 정보가 만료되었습니다. 다시 로그인 해주세요.');
+      } else {
+        setError('상품 등록 중 오류가 발생했습니다.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return {
-    formData, customLocation, setCustomLocation, images, loading, error, errors, setErrors, isModalOpen, setIsModalOpen,
-    handleChange, handleImageChange, handleRemoveImage, handleSubmit, navigate
+    formData,
+    imagePreview,
+    loading,
+    error,
+    errors,
+    isModalOpen,
+    setIsModalOpen,
+    handleChange,
+    handleImageChange,
+    handleRemoveImage,
+    handleSubmit,
+    navigate
   };
 }

@@ -17,7 +17,6 @@ export default function App() {
         
         {/* 🔓 누구나 볼 수 있는 페이지 (비로그인 허용) */}
         <Route path="/products" element={<ProductList />} />
-
         <Route path="/products/:productId" element={<ProductDetail />} />
         
         {/* 🔒 로그인한 사용자만 접근 가능한 페이지 그룹 */}
