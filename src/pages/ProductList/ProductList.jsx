@@ -1,29 +1,7 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductGrid from "./components/ProductGrid";
 import { useProducts } from "./hooks/useProducts";
-import { SORT_OPTIONS } from "./constants/productConstants";
 import "./ProductList.css";
-
-function getStoredCommentCount(productId) {
-  const savedComments = localStorage.getItem(`product_comments_${productId}`);
-
-  if (!savedComments) {
-    return null;
-  }
-
-  try {
-    const parsedComments = JSON.parse(savedComments);
-
-    if (!Array.isArray(parsedComments)) {
-      return null;
-    }
-
-    return parsedComments.length;
-  } catch {
-    return null;
-  }
-}
 
 export default function ProductList() {
   const navigate = useNavigate();
@@ -32,22 +10,9 @@ export default function ProductList() {
     error,
     searchKeyword,
     setSearchKeyword,
-    sortOption,
-    setSortOption,
-    sortedProducts,
+    filteredProducts,
     handleSearchSubmit,
   } = useProducts();
-
-  const productsWithCommentCounts = useMemo(() => {
-    return sortedProducts.map((product) => {
-      const storedCommentCount = getStoredCommentCount(product.id);
-
-      return {
-        ...product,
-        commentCount: storedCommentCount ?? product.commentCount,
-      };
-    });
-  }, [sortedProducts]);
 
   return (
     <section>
@@ -79,23 +44,8 @@ export default function ProductList() {
         </button>
       </div>
 
-      <div className="product-list__toolbar">
-        <select
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-          className="product-list__sort-select"
-          aria-label="정렬 옵션 선택"
-        >
-          {SORT_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <ProductGrid
-        products={productsWithCommentCounts}
+        products={filteredProducts}
         loading={loading}
         error={error}
       />

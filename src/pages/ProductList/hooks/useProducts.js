@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { fetchProducts } from "../api";
 import { MOCK_PRODUCTS } from "../constants/productConstants";
 
@@ -7,25 +7,28 @@ export function useProducts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [sortOption, setSortOption] = useState("latest");
 
   // 1. 순수한 데이터 요청 및 데이터 가공 로직 전용 헬퍼 함수 
   const getFilteredData = useCallback(async (keyword = "") => {
     try {
       const params = keyword ? { search: keyword } : {};
-      const data = await fetchProducts(params);
-      return data?.items ?? data ?? [];
+      const response = await fetchProducts(params);
+
+      const data = response?.data ?? response;
+      return data?.content ?? [];
     } catch {
+      let list = MOCK_PRODUCTS.filter(product => product.status !== 'SOLD_OUT');
+      
       if (keyword) {
-        return MOCK_PRODUCTS.filter((product) =>
+        list = list.filter((product) =>
           product.title.toLowerCase().includes(keyword.toLowerCase())
         );
       }
-      return MOCK_PRODUCTS;
+      return list;
     }
   }, []);
 
-  // 2.컴포넌트 마운트 시 동작할 Effect 
+  // 2. 컴포넌트 마운트 시 동작할 Effect 
   useEffect(() => {
     let isMounted = true;
 
@@ -57,30 +60,12 @@ export function useProducts() {
     setLoading(false);
   }, [searchKeyword, getFilteredData]);
 
-  // 4. 정렬된 상품 목록을 계산하는 Memoized 값 (의존성 배열에 products와 sortOption 포함)
-  const sortedProducts = useMemo(() => {
-    const list = [...products];
-    switch (sortOption) {
-      case "price-high":
-        return list.sort((a, b) => b.price - a.price);
-      case "price-low":
-        return list.sort((a, b) => a.price - b.price);
-      case "popular":
-        return list.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
-      case "latest":
-      default:
-        return list.sort((a, b) => b.id - a.id);
-    }
-  }, [products, sortOption]);
-
   return {
     loading,
     error,
     searchKeyword,
     setSearchKeyword,
-    sortOption,
-    setSortOption,
-    sortedProducts,
+    filteredProducts: products,
     handleSearchSubmit,
   };
 }
