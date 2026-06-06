@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { updateMyProfile } from '../api.js'; // API 함수 경로에 맞게 수정 필요
 
 export default function ProfileEditModal({ isOpen, onClose, currentNickname, onRefresh }) {
   const [nickname, setNickname] = useState('');
@@ -19,11 +20,26 @@ export default function ProfileEditModal({ isOpen, onClose, currentNickname, onR
 
     setLoading(true);
     try {
-      // API 연동 생략 단계 처리
-      onRefresh(); 
+      // 입력된 데이터만 페이로드에 담아 전송
+      const updateData = {};
+      if (nickname.trim()) updateData.nickname = nickname;
+      if (password.trim()) updateData.password = password;
+
+      await updateMyProfile(updateData);
+      
+      alert('회원 정보가 성공적으로 수정되었습니다.');
+      setNickname('');
+      setPassword('');
+      onRefresh(); // 수정 완료 후 마이페이지 최신화
       onClose();
     } catch (err) {
-      setError(err.response?.status === 400 ? '잘못된 요청 형식입니다.' : '오류가 발생했습니다.');
+      if (err.response?.status === 400) {
+        setError('잘못된 요청 형식입니다.');
+      } else if (err.response?.status === 401) {
+        setError('인증에 실패했습니다. 다시 로그인해주세요.');
+      } else {
+        setError('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      }
     } finally {
       setLoading(false);
     }
