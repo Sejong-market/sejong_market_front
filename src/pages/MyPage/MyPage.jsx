@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
@@ -6,6 +6,7 @@ import SortToolbar from './components/SortToolbar';
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
 import { fetchMyProfile, fetchMyProducts, deleteMyAccount } from './api';
+import { MY_PRODUCT_PAGE_SIZE, MY_PRODUCT_SORT } from './constants/mypageConstants';
 import './MyPage.css';
 
 function isAuthError(err) {
@@ -14,11 +15,13 @@ function isAuthError(err) {
 
 export default function MyPage() {
   const navigate = useNavigate();
+  const isInitialized = useRef(false);
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const [sortOption, setSortOption] = useState('latest');
   const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -28,40 +31,73 @@ export default function MyPage() {
     navigate('/login');
   }, [navigate]);
 
+  const loadProfile = useCallback(async () => {
+    const profileRes = await fetchMyProfile();
+    const profileData = profileRes?.data ?? profileRes;
+    setProfile(profileData);
+  }, []);
+
+  const loadProducts = useCallback(async (sort = sortOption) => {
+    const productsRes = await fetchMyProducts({
+      page: 0,
+      size: MY_PRODUCT_PAGE_SIZE,
+      sort: MY_PRODUCT_SORT[sort] ?? MY_PRODUCT_SORT.latest,
+    });
+    const productsData = productsRes?.data ?? productsRes;
+    setProducts(productsData?.content ?? []);
+  }, [sortOption]);
+
+  const handleLoadError = useCallback((err) => {
+    if (isAuthError(err)) {
+      handleAuthFailure();
+      return;
+    }
+
+    if (err?.message === 'Failed to fetch') {
+      setError('서버에 연결할 수 없습니다. 백엔드 실행 여부를 확인해주세요.');
+    } else {
+      setError('마이페이지 데이터를 불러오지 못했습니다.');
+    }
+  }, [handleAuthFailure]);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError('');
 
     try {
-      const [profileRes, productsRes] = await Promise.all([
-        fetchMyProfile(),
-        fetchMyProducts({ page: 0, size: 10 }),
-      ]);
-
-      const profileData = profileRes?.data ?? profileRes;
-      const productsData = productsRes?.data ?? productsRes;
-
-      setProfile(profileData);
-      setProducts(productsData?.content ?? []);
+      await Promise.all([loadProfile(), loadProducts()]);
     } catch (err) {
-      if (isAuthError(err)) {
-        handleAuthFailure();
-        return;
-      }
-
-      if (err?.message === 'Failed to fetch') {
-        setError('서버에 연결할 수 없습니다. 백엔드 실행 여부를 확인해주세요.');
-      } else {
-        setError('마이페이지 데이터를 불러오지 못했습니다.');
-      }
+      handleLoadError(err);
     } finally {
       setLoading(false);
+      isInitialized.current = true;
     }
-  }, [handleAuthFailure]);
+  }, [loadProfile, loadProducts, handleLoadError]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (!isInitialized.current) {
+      return;
+    }
+
+    async function reloadProducts() {
+      setProductsLoading(true);
+      setError('');
+
+      try {
+        await loadProducts(sortOption);
+      } catch (err) {
+        handleLoadError(err);
+      } finally {
+        setProductsLoading(false);
+      }
+    }
+
+    reloadProducts();
+  }, [sortOption, loadProducts, handleLoadError]);
 
   const handleDeleteAccount = async () => {
     const isConfirmed = window.confirm(
@@ -92,12 +128,7 @@ export default function MyPage() {
     return false;
   });
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === 'latest') return new Date(b.createdAt) - new Date(a.createdAt);
-    if (sortOption === 'price_asc') return a.price - b.price;
-    if (sortOption === 'price_desc') return b.price - a.price;
-    return 0;
-  });
+  const isListLoading = loading || productsLoading;
 
   return (
     <section className="mypage">
@@ -125,13 +156,13 @@ export default function MyPage() {
       />
 
       <div className="mypage__list">
-        {loading ? (
+        {isListLoading ? (
           <div className="mypage__list-empty">로딩 중...</div>
-        ) : sortedProducts.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="mypage__list-empty">상품이 없습니다.</div>
         ) : (
           <div className="mypage__product-grid">
-            {sortedProducts.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard
                 key={product.productId || product.id}
                 product={product}
