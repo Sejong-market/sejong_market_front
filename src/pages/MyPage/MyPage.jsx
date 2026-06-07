@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
 import SortToolbar from './components/SortToolbar';
+import ProductPagination from './components/ProductPagination';
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
 import { fetchMyProfile, fetchMyProducts, deleteMyAccount } from './api';
@@ -15,11 +16,16 @@ function isAuthError(err) {
 
 export default function MyPage() {
   const navigate = useNavigate();
-  const isInitialized = useRef(false);
+  const sortOptionRef = useRef('latest');
+  const pageRef = useRef(0);
+  const skipSortReload = useRef(true);
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const [sortOption, setSortOption] = useState('latest');
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,22 +36,6 @@ export default function MyPage() {
     alert('인증이 만료되었습니다. 다시 로그인해주세요.');
     navigate('/login');
   }, [navigate]);
-
-  const loadProfile = useCallback(async () => {
-    const profileRes = await fetchMyProfile();
-    const profileData = profileRes?.data ?? profileRes;
-    setProfile(profileData);
-  }, []);
-
-  const loadProducts = useCallback(async (sort = sortOption) => {
-    const productsRes = await fetchMyProducts({
-      page: 0,
-      size: MY_PRODUCT_PAGE_SIZE,
-      sort: MY_PRODUCT_SORT[sort] ?? MY_PRODUCT_SORT.latest,
-    });
-    const productsData = productsRes?.data ?? productsRes;
-    setProducts(productsData?.content ?? []);
-  }, [sortOption]);
 
   const handleLoadError = useCallback((err) => {
     if (isAuthError(err)) {
@@ -60,17 +50,40 @@ export default function MyPage() {
     }
   }, [handleAuthFailure]);
 
+  const loadProfile = useCallback(async () => {
+    const profileRes = await fetchMyProfile();
+    const profileData = profileRes?.data ?? profileRes;
+    setProfile(profileData);
+  }, []);
+
+  const loadProducts = useCallback(async ({ sort, pageNumber }) => {
+    const productsRes = await fetchMyProducts({
+      page: pageNumber,
+      size: MY_PRODUCT_PAGE_SIZE,
+      sort: MY_PRODUCT_SORT[sort] ?? MY_PRODUCT_SORT.latest,
+    });
+    const productsData = productsRes?.data ?? productsRes;
+
+    setProducts(productsData?.content ?? []);
+    setTotalPages(productsData?.totalPages ?? 0);
+    setTotalElements(productsData?.totalElements ?? 0);
+    setPage(productsData?.number ?? pageNumber);
+    pageRef.current = productsData?.number ?? pageNumber;
+  }, []);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError('');
 
     try {
-      await Promise.all([loadProfile(), loadProducts()]);
+      await Promise.all([
+        loadProfile(),
+        loadProducts({ sort: sortOptionRef.current, pageNumber: pageRef.current }),
+      ]);
     } catch (err) {
       handleLoadError(err);
     } finally {
       setLoading(false);
-      isInitialized.current = true;
     }
   }, [loadProfile, loadProducts, handleLoadError]);
 
@@ -79,7 +92,12 @@ export default function MyPage() {
   }, [loadData]);
 
   useEffect(() => {
-    if (!isInitialized.current) {
+    sortOptionRef.current = sortOption;
+  }, [sortOption]);
+
+  useEffect(() => {
+    if (skipSortReload.current) {
+      skipSortReload.current = false;
       return;
     }
 
@@ -88,7 +106,7 @@ export default function MyPage() {
       setError('');
 
       try {
-        await loadProducts(sortOption);
+        await loadProducts({ sort: sortOption, pageNumber: 0 });
       } catch (err) {
         handleLoadError(err);
       } finally {
@@ -98,6 +116,19 @@ export default function MyPage() {
 
     reloadProducts();
   }, [sortOption, loadProducts, handleLoadError]);
+
+  const handlePageChange = async (nextPage) => {
+    setProductsLoading(true);
+    setError('');
+
+    try {
+      await loadProducts({ sort: sortOptionRef.current, pageNumber: nextPage });
+    } catch (err) {
+      handleLoadError(err);
+    } finally {
+      setProductsLoading(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     const isConfirmed = window.confirm(
@@ -150,7 +181,7 @@ export default function MyPage() {
       <TabMenu activeTab={activeTab} onChange={setActiveTab} />
 
       <SortToolbar
-        totalCount={filteredProducts.length}
+        totalCount={totalElements}
         sortOption={sortOption}
         onSortChange={setSortOption}
       />
@@ -171,6 +202,13 @@ export default function MyPage() {
           </div>
         )}
       </div>
+
+      <ProductPagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        disabled={isListLoading}
+      />
 
       <button
         type="button"
