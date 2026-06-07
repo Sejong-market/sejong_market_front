@@ -5,11 +5,20 @@ export function fetchMyProfile() {
   return api.get('/users/mypage')
 }
 
-// 2. 내 정보 수정 (닉네임 또는 비밀번호)
-export function updateMyProfile(data) {
-  return api.patch('/users/mypage', data)
-}
+// 2. 내 정보 수정 (닉네임 또는 비밀번호 — 전송한 필드만 반영)
+export function updateMyProfile({ nickname, password } = {}) {
+  const body = {}
 
+  if (nickname?.trim()) {
+    body.nickname = nickname.trim()
+  }
+
+  if (password?.trim()) {
+    body.password = password.trim()
+  }
+
+  return api.patch('/users/mypage', body)
+}
 // 3. 회원 탈퇴
 export function deleteMyAccount() {
   return api.delete('/users/mypage')
