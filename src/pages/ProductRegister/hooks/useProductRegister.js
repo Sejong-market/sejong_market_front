@@ -85,7 +85,7 @@ export default function useProductRegister() {
 
       // 2. image 파트: 선택된 파일이 있을 경우 파일 객체 추가
       if (imageFile) {
-        data.append('image', imageFile);
+        data.append('image', imageFile, imageFile.name);
       }
 
       await createProduct(data);
@@ -93,11 +93,11 @@ export default function useProductRegister() {
       navigate('/products');
     } catch (err) {
       console.error(err);
-      if (err.response?.status === 413) {
+      if (err.status === 413) {
         setError('이미지 용량이 너무 큽니다. (최대 10MB)');
-      } else if (err.response?.status === 400) {
+      } else if (err.status === 400) {
         setError('입력하신 정보를 다시 확인해주세요. (유효성 검증 실패)');
-      } else if (err.response?.status === 401 || err.response?.status === 403) {
+      } else if (err.status === 401 || err.status === 403) {
         setError('인증 정보가 만료되었습니다. 다시 로그인 해주세요.');
       } else {
         setError('상품 등록 중 오류가 발생했습니다.');

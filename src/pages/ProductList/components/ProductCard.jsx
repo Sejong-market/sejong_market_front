@@ -1,8 +1,10 @@
 // src/pages/ProductList/components/ProductCard.jsx
 import { useNavigate } from 'react-router-dom'
+import { resolveImageUrl } from '../../../shared/utils/imageUrl'
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate()
+  const imageSrc = resolveImageUrl(product.imageUrl)
 
   // 백엔드 Status 문자열 코드와 기존 CSS 클래스 매핑
   const getStatusClass = (status) => {
@@ -60,9 +62,9 @@ export default function ProductCard({ product }) {
     >
       <div className="product-card__image-wrap">
         {/* image -> imageUrl 변경 */}
-        {product.imageUrl ? (
+        {imageSrc ? (
           <img
-            src={product.imageUrl}
+            src={imageSrc}
             alt={product.title}
             className="product-card__image"
           />
