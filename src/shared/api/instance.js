@@ -38,6 +38,10 @@ function resolveAccessToken() {
   return token
 }
 
+export function hasValidAccessToken() {
+  return Boolean(resolveAccessToken())
+}
+
 async function parseResponseBody(response) {
   const text = await response.text()
 

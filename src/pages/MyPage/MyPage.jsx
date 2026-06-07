@@ -1,69 +1,156 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
-import SortToolbar from './components/SortToolbar'; // 1. 분리한 컴포넌트 import
+import SortToolbar from './components/SortToolbar';
+import ProductPagination from './components/ProductPagination';
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
-import { MOCK_PROFILE, MOCK_PRODUCTS } from './mockData.js';
+import { fetchMyProfile, fetchMyProducts, deleteMyAccount } from './api';
+import { MY_PRODUCT_PAGE_SIZE, MY_PRODUCT_SORT } from './constants/mypageConstants';
 import './MyPage.css';
+
+function isAuthError(err) {
+  return err?.status === 401 || err?.status === 403;
+}
 
 export default function MyPage() {
   const navigate = useNavigate();
+  const sortOptionRef = useRef('latest');
+  const pageRef = useRef(0);
+  const skipSortReload = useRef(true);
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const [sortOption, setSortOption] = useState('latest');
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleAuthFailure = useCallback(() => {
+    localStorage.removeItem('accessToken');
+    alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+    navigate('/login');
+  }, [navigate]);
+
+  const handleLoadError = useCallback((err) => {
+    if (isAuthError(err)) {
+      handleAuthFailure();
+      return;
+    }
+
+    if (err?.message === 'Failed to fetch') {
+      setError('서버에 연결할 수 없습니다. 백엔드 실행 여부를 확인해주세요.');
+    } else {
+      setError('마이페이지 데이터를 불러오지 못했습니다.');
+    }
+  }, [handleAuthFailure]);
+
+  const loadProfile = useCallback(async () => {
+    const profileRes = await fetchMyProfile();
+    const profileData = profileRes?.data ?? profileRes;
+    setProfile(profileData);
+  }, []);
+
+  const loadProducts = useCallback(async ({ sort, pageNumber }) => {
+    const productsRes = await fetchMyProducts({
+      page: pageNumber,
+      size: MY_PRODUCT_PAGE_SIZE,
+      sort: MY_PRODUCT_SORT[sort] ?? MY_PRODUCT_SORT.latest,
+    });
+    const productsData = productsRes?.data ?? productsRes;
+
+    setProducts(productsData?.content ?? []);
+    setTotalPages(productsData?.totalPages ?? 0);
+    setTotalElements(productsData?.totalElements ?? 0);
+    setPage(productsData?.number ?? pageNumber);
+    pageRef.current = productsData?.number ?? pageNumber;
+  }, []);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    // try {
-    //   const [profileRes, productsRes] = await Promise.all([
-    //     fetchMyProfile(),
-    //     fetchMyProducts({ page: 0, size: 10 }),
-    //   ]);
-    //   
-    //   setProfile(profileRes?.data ?? profileRes);
-    //   setProducts(productsRes?.data?.content ?? productsRes?.content ?? []);
-    // } catch {
-     // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
-        setProfile(MOCK_PROFILE);
-        setProducts(MOCK_PRODUCTS);
-    // } finally {
-        setLoading(false);
-    // }  
-  }, []);
-useEffect(() => {
-    const timeoutId = setTimeout(loadData, 0);
-    return () => clearTimeout(timeoutId);
-  }, [loadData]);
-
-  // 회원 탈퇴 처리
-  const handleDeleteAccount = async () => {
-    const isConfirmed = window.confirm("정말 탈퇴하시겠습니까? 현재 계정의 모든 정보가 영구 삭제됩니다.");
-    if (!isConfirmed) return;
+    setError('');
 
     try {
-      const response = await fetch('/api/users/mypage', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await Promise.all([
+        loadProfile(),
+        loadProducts({ sort: sortOptionRef.current, pageNumber: pageRef.current }),
+      ]);
+    } catch (err) {
+      handleLoadError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadProfile, loadProducts, handleLoadError]);
 
-      if (response.ok) {
-        alert("회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.");
-        navigate('/login');
-      } else {
-        alert(response.status === 401 ? "인증 자격이 유효하지 않습니다. 다시 로그인해 주세요." : "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    sortOptionRef.current = sortOption;
+  }, [sortOption]);
+
+  useEffect(() => {
+    if (skipSortReload.current) {
+      skipSortReload.current = false;
+      return;
+    }
+
+    async function reloadProducts() {
+      setProductsLoading(true);
+      setError('');
+
+      try {
+        await loadProducts({ sort: sortOption, pageNumber: 0 });
+      } catch (err) {
+        handleLoadError(err);
+      } finally {
+        setProductsLoading(false);
       }
-    } catch (error) {
-      console.error("회원 탈퇴 요청 실패:", error);
-      alert("네트워크 오류가 발생했습니다.");
+    }
+
+    reloadProducts();
+  }, [sortOption, loadProducts, handleLoadError]);
+
+  const handlePageChange = async (nextPage) => {
+    setProductsLoading(true);
+    setError('');
+
+    try {
+      await loadProducts({ sort: sortOptionRef.current, pageNumber: nextPage });
+    } catch (err) {
+      handleLoadError(err);
+    } finally {
+      setProductsLoading(false);
     }
   };
 
-  // 필터링 및 정렬 처리
+  const handleDeleteAccount = async () => {
+    const isConfirmed = window.confirm(
+      '정말 탈퇴하시겠습니까? 현재 계정의 모든 정보가 영구 삭제됩니다.'
+    );
+    if (!isConfirmed) return;
+
+    try {
+      await deleteMyAccount();
+      localStorage.removeItem('accessToken');
+      alert('회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+      navigate('/login');
+    } catch (err) {
+      console.error('회원 탈퇴 요청 실패:', err);
+      if (isAuthError(err)) {
+        handleAuthFailure();
+      } else {
+        alert('오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    }
+  };
+
   const filteredProducts = products.filter((p) => {
     if (activeTab === 'all') return true;
     if (activeTab === 'selling') return p.status === 'FOR_SALE' || p.status === '판매중';
@@ -72,58 +159,60 @@ useEffect(() => {
     return false;
   });
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === 'latest') return new Date(b.createdAt) - new Date(a.createdAt);
-    if (sortOption === 'price_asc') return a.price - b.price;
-    if (sortOption === 'price_desc') return b.price - a.price;
-    return 0;
-  });
+  const isListLoading = loading || productsLoading;
 
   return (
     <section className="mypage">
       <h1 className="mypage__title">마이페이지</h1>
-      
-      <ProfileSection 
-        profile={profile} 
-        loading={loading} 
-        onEditClick={() => setIsEditModalOpen(true)} 
-        onDeleteAccount={handleDeleteAccount} 
+
+      {error && (
+        <div className="mypage__error" role="alert">
+          {error}
+        </div>
+      )}
+
+      <ProfileSection
+        profile={profile}
+        loading={loading}
+        onEditClick={() => setIsEditModalOpen(true)}
+        onDeleteAccount={handleDeleteAccount}
       />
-      
+
       <TabMenu activeTab={activeTab} onChange={setActiveTab} />
 
-      <SortToolbar 
-        totalCount={filteredProducts.length}
+      <SortToolbar
+        totalCount={totalElements}
         sortOption={sortOption}
         onSortChange={setSortOption}
       />
 
       <div className="mypage__list">
-        {loading ? (
+        {isListLoading ? (
           <div className="mypage__list-empty">로딩 중...</div>
-        ) : sortedProducts.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="mypage__list-empty">상품이 없습니다.</div>
         ) : (
           <div className="mypage__product-grid">
-            {sortedProducts.map((product) => (
-              <ProductCard 
-                key={product.productId || product.id} 
-                product={{
-                  ...product,
-                  id: product.productId || product.id,
-                  image: product.imageUrl || product.image,
-                  status: product.status === 'FOR_SALE' || product.status === '판매중' ? '판매중' : 
-                          product.status === 'RESERVED' || product.status === '예약중' ? '예약중' : '판매완료'
-                }}
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.productId || product.id}
+                product={product}
               />
             ))}
           </div>
         )}
       </div>
 
-      <button 
-        type="button" 
-        className="mypage__fab" 
+      <ProductPagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        disabled={isListLoading}
+      />
+
+      <button
+        type="button"
+        className="mypage__fab"
         onClick={() => navigate('/products/new')}
         aria-label="상품 등록"
       >
@@ -133,9 +222,9 @@ useEffect(() => {
         </svg>
       </button>
 
-      <ProfileEditModal 
-        isOpen={isEditModalOpen} 
-        onClose={() => setIsEditModalOpen(false)} 
+      <ProfileEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         currentNickname={profile?.nickname || ''}
         onRefresh={loadData}
       />

@@ -27,6 +27,49 @@
   color: #6b7280;
 }
 
+.mypage__error {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.mypage__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.mypage__pagination-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #9A1C1F;
+  background-color: #ffffff;
+  border: 1px solid #9A1C1F;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mypage__pagination-btn:hover:not(:disabled) {
+  background-color: #ffe6e5;
+}
+
+.mypage__pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mypage__pagination-info {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
 /* 프로필 섹션 */
 .profile-section {
   display: flex;
