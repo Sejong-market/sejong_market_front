@@ -1,4 +1,4 @@
-import { api } from '../api.js'
+import { api } from '../../shared/api/instance'
 
 // 1. 내 정보 조회
 export function fetchMyProfile() {
