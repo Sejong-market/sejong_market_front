@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { updateMyProfile } from '../api.js'; // API 함수 경로에 맞게 수정 필요
+import { updateMyProfile } from '../api';
 
 export default function ProfileEditModal({ isOpen, onClose, currentNickname, onRefresh }) {
   const [nickname, setNickname] = useState('');
@@ -33,9 +33,9 @@ export default function ProfileEditModal({ isOpen, onClose, currentNickname, onR
       onRefresh(); // 수정 완료 후 마이페이지 최신화
       onClose();
     } catch (err) {
-      if (err.response?.status === 400) {
+      if (err?.status === 400) {
         setError('잘못된 요청 형식입니다.');
-      } else if (err.response?.status === 401) {
+      } else if (err?.status === 401 || err?.status === 403) {
         setError('인증에 실패했습니다. 다시 로그인해주세요.');
       } else {
         setError('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');

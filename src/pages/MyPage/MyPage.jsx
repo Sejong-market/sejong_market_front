@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileSection from './components/ProfileSection';
 import TabMenu from './components/TabMenu';
-import SortToolbar from './components/SortToolbar'; // 1. 분리한 컴포넌트 import
+import SortToolbar from './components/SortToolbar';
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
+import { fetchMyProfile, fetchMyProducts, deleteMyAccount } from './api';
 import { MOCK_PROFILE, MOCK_PRODUCTS } from './mockData.js';
 import './MyPage.css';
 
@@ -19,51 +20,53 @@ export default function MyPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    // try {
-    //   const [profileRes, productsRes] = await Promise.all([
-    //     fetchMyProfile(),
-    //     fetchMyProducts({ page: 0, size: 10 }),
-    //   ]);
-    //   
-    //   setProfile(profileRes?.data ?? profileRes);
-    //   setProducts(productsRes?.data?.content ?? productsRes?.content ?? []);
-    // } catch {
-     // console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
-        setProfile(MOCK_PROFILE);
-        setProducts(MOCK_PRODUCTS);
-    // } finally {
-        setLoading(false);
-    // }  
+
+    try {
+      const [profileRes, productsRes] = await Promise.all([
+        fetchMyProfile(),
+        fetchMyProducts({ page: 0, size: 10 }),
+      ]);
+
+      const profileData = profileRes?.data ?? profileRes;
+      const productsData = productsRes?.data ?? productsRes;
+
+      setProfile(profileData);
+      setProducts(productsData?.content ?? []);
+    } catch {
+      console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
+      setProfile(MOCK_PROFILE);
+      setProducts(MOCK_PRODUCTS);
+    } finally {
+      setLoading(false);
+    }
   }, []);
-useEffect(() => {
-    const timeoutId = setTimeout(loadData, 0);
-    return () => clearTimeout(timeoutId);
+
+  useEffect(() => {
+    loadData();
   }, [loadData]);
 
-  // 회원 탈퇴 처리
   const handleDeleteAccount = async () => {
-    const isConfirmed = window.confirm("정말 탈퇴하시겠습니까? 현재 계정의 모든 정보가 영구 삭제됩니다.");
+    const isConfirmed = window.confirm(
+      '정말 탈퇴하시겠습니까? 현재 계정의 모든 정보가 영구 삭제됩니다.'
+    );
     if (!isConfirmed) return;
 
     try {
-      const response = await fetch('/api/users/mypage', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (response.ok) {
-        alert("회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.");
+      await deleteMyAccount();
+      localStorage.removeItem('accessToken');
+      alert('회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+      navigate('/login');
+    } catch (err) {
+      console.error('회원 탈퇴 요청 실패:', err);
+      if (err?.status === 401 || err?.status === 403) {
+        alert('인증 자격이 유효하지 않습니다. 다시 로그인해 주세요.');
         navigate('/login');
       } else {
-        alert(response.status === 401 ? "인증 자격이 유효하지 않습니다. 다시 로그인해 주세요." : "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        alert('오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       }
-    } catch (error) {
-      console.error("회원 탈퇴 요청 실패:", error);
-      alert("네트워크 오류가 발생했습니다.");
     }
   };
 
-  // 필터링 및 정렬 처리
   const filteredProducts = products.filter((p) => {
     if (activeTab === 'all') return true;
     if (activeTab === 'selling') return p.status === 'FOR_SALE' || p.status === '판매중';
@@ -82,17 +85,17 @@ useEffect(() => {
   return (
     <section className="mypage">
       <h1 className="mypage__title">마이페이지</h1>
-      
-      <ProfileSection 
-        profile={profile} 
-        loading={loading} 
-        onEditClick={() => setIsEditModalOpen(true)} 
-        onDeleteAccount={handleDeleteAccount} 
+
+      <ProfileSection
+        profile={profile}
+        loading={loading}
+        onEditClick={() => setIsEditModalOpen(true)}
+        onDeleteAccount={handleDeleteAccount}
       />
-      
+
       <TabMenu activeTab={activeTab} onChange={setActiveTab} />
 
-      <SortToolbar 
+      <SortToolbar
         totalCount={filteredProducts.length}
         sortOption={sortOption}
         onSortChange={setSortOption}
@@ -106,24 +109,18 @@ useEffect(() => {
         ) : (
           <div className="mypage__product-grid">
             {sortedProducts.map((product) => (
-              <ProductCard 
-                key={product.productId || product.id} 
-                product={{
-                  ...product,
-                  id: product.productId || product.id,
-                  image: product.imageUrl || product.image,
-                  status: product.status === 'FOR_SALE' || product.status === '판매중' ? '판매중' : 
-                          product.status === 'RESERVED' || product.status === '예약중' ? '예약중' : '판매완료'
-                }}
+              <ProductCard
+                key={product.productId || product.id}
+                product={product}
               />
             ))}
           </div>
         )}
       </div>
 
-      <button 
-        type="button" 
-        className="mypage__fab" 
+      <button
+        type="button"
+        className="mypage__fab"
         onClick={() => navigate('/products/new')}
         aria-label="상품 등록"
       >
@@ -133,9 +130,9 @@ useEffect(() => {
         </svg>
       </button>
 
-      <ProfileEditModal 
-        isOpen={isEditModalOpen} 
-        onClose={() => setIsEditModalOpen(false)} 
+      <ProfileEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         currentNickname={profile?.nickname || ''}
         onRefresh={loadData}
       />

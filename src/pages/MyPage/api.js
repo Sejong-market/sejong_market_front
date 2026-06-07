@@ -16,6 +16,10 @@ export function deleteMyAccount() {
 }
 
 // 4. 내가 등록한 상품 조회 (페이징 쿼리 파라미터 적용)
-export function fetchMyProducts(params = { page: 0, size: 10, sort: 'createdAt,desc' }) {
-  return api.get('/users/mypage/products', { params })
+export function fetchMyProducts(params = {}) {
+  const defaultParams = { page: 0, size: 10, sort: 'createdAt,desc', ...params }
+  const query = new URLSearchParams(defaultParams).toString()
+
+  const path = query ? `/users/mypage/products?${query}` : '/users/mypage/products'
+  return api.get(path)
 }
