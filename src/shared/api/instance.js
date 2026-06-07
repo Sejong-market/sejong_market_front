@@ -1,5 +1,43 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api'
 
+function parseJwtPayload(token) {
+  const parts = token.split('.')
+  if (parts.length !== 3) {
+    return null
+  }
+
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=')
+    return JSON.parse(atob(padded))
+  } catch {
+    return null
+  }
+}
+
+function isAccessTokenExpired(token) {
+  const payload = parseJwtPayload(token)
+  if (!payload?.exp) {
+    return true
+  }
+
+  return Date.now() >= payload.exp * 1000
+}
+
+function resolveAccessToken() {
+  const token = localStorage.getItem('accessToken')
+  if (!token) {
+    return null
+  }
+
+  if (isAccessTokenExpired(token)) {
+    localStorage.removeItem('accessToken')
+    return null
+  }
+
+  return token
+}
+
 async function parseResponseBody(response) {
   const text = await response.text()
 
@@ -29,7 +67,7 @@ async function request(path, options = {}) {
     config.body = JSON.stringify(body)
   }
 
-  const token = localStorage.getItem('accessToken')
+  const token = resolveAccessToken()
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
