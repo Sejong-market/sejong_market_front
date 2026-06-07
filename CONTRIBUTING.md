@@ -50,7 +50,7 @@ git checkout -b feature/기능명
 # 예시
 git checkout -b feature/login-ui
 git checkout -b feature/product-list-grid
-git checkout -b feature/chat-window
+git checkout -b feature/product-detail
 ```
 
 ### feature 브랜치 네이밍
@@ -62,7 +62,7 @@ git checkout -b feature/chat-window
 feature/login-ui
 feature/product-card
 feature/mypage-profile
-feature/chat-message-input
+feature/product-comment-form
 ```
 
 ### ⛔ develop 직접 push 금지
@@ -96,11 +96,11 @@ feature/chat-message-input
 | 타입 | 사용 시점 | 예시 |
 |------|-----------|------|
 | `feat` | 새 기능·화면·라우트 추가 | `feat: 상품 목록 그리드 UI 추가` |
-| `fix` | 버그 수정 | `fix: 채팅 입력창 전송 버튼 비활성화 오류 수정` |
+| `fix` | 버그 수정 | `fix: 댓글 등록 폼 유효성 검사 오류 수정` |
 | `docs` | 문서만 변경 (README, CONTRIBUTING 등) | `docs: CONTRIBUTING 롤백 절차 보완` |
 | `style` | 로직 변경 없는 UI·포맷 수정 | `style: 로그인 폼 버튼 간격 조정` |
 | `refactor` | 동작 동일, 구조·이름 정리 | `refactor: ProductList API 호출 로직 분리` |
-| `revert` | **롤백** — 이전 커밋 되돌릴 때 | `revert: feat: 채팅 레이아웃 2단 구조 적용` |
+| `revert` | **롤백** — 이전 커밋 되돌릴 때 | `revert: feat: 상품 상세 2단 레이아웃 적용` |
 
 ### `revert` 태그 (롤백 전용)
 
@@ -132,7 +132,7 @@ revert: fix: 헤더 네비게이션 활성 상태 스타일
 
 ```
 ✅ feat: ProductList 목 데이터 폴백 처리 추가
-✅ revert: style: 채팅 버블 색상 emerald로 변경
+✅ revert: style: 댓글 버블 색상 emerald로 변경
 ❌ 수정함
 ❌ WIP
 ❌ asdfasdf
@@ -227,7 +227,7 @@ try {
 
 ```
 feat: 상품 목록 ProductGrid UI 및 목 데이터 연동
-fix: 채팅방 선택 시 메시지 미표시 오류 수정
+fix: 상품 상세 댓글 목록 미표시 오류 수정
 ```
 
 ### 병합 권한
@@ -320,7 +320,7 @@ git log --oneline
 git revert <되돌릴_커밋해시>
 
 # 커밋 메시지는 revert 타입 준수
-# revert: feat: 채팅 2단 레이아웃 적용
+# revert: feat: 상품 상세 2단 레이아웃 적용
 
 git push origin feature/기능명
 ```

@@ -31,8 +31,8 @@
 |------|-----------|
 | **조대승(팀장)** | 백엔드 기획, 백엔드 PR리뷰, 백엔드 개발  |
 | **오예찬(파트장)** | 프론트엔드 PR리뷰, 백엔드 개발 |
-| **김나현** | 서비스 기획, 프론트엔드 개발 |
-| **박민지** | 서비스 기획, 프론트엔드 개발 |
+| **김나현** | 로그인 페이지, 상품 상세 페이지 UI 개발 |
+| **박민지** | 상품 게시판, 상품 등록, 마이페이지 UI 개발 |
 
 ## 프로젝트 구조
 
@@ -54,24 +54,30 @@ src/
     │   ├── ProductList.jsx
     │   ├── api.js
     │   └── components/
-    ├── MyPage/
-    │   ├── MyPage.jsx
+    ├── ProductDetail/
+    │   ├── ProductDetail.jsx
     │   ├── api.js
-    │   └── components/
-    └── Chat/
-        ├── Chat.jsx
+    │   └── components/      # CommentList, CommentForm
+    ├── ProductRegister/
+    │   ├── ProductRegister.jsx
+    │   ├── api.js
+    │   ├── components/
+    │   └── hooks/
+    └── MyPage/
+        ├── MyPage.jsx
         ├── api.js
         └── components/
 ```
 
 ## 라우팅
 
-| 경로 | 페이지 |
-|------|--------|
-| `/login` | 로그인 |
-| `/products` | 상품 목록 |
-| `/mypage` | 마이페이지 |
-| `/chat` | 채팅 |
+| 경로 | 페이지 | 접근 |
+|------|--------|------|
+| `/login` | 로그인 | 공개 |
+| `/products` | 상품 목록 | 공개 |
+| `/products/:productId` | 상품 상세 (댓글 문의) | 공개 |
+| `/products/new` | 상품 등록 | 로그인 필요 |
+| `/mypage` | 마이페이지 | 로그인 필요 |
 
 ## 시작하기
 
@@ -138,7 +144,7 @@ feature/*         ← 기능 단위 작업 브랜치
 |--------|------|
 | `master` | 프로덕션 배포용. `develop`에서 검증된 코드만 병합 |
 | `develop` | 일상 개발 통합 브랜치. feature 브랜치 병합 대상 |
-| `feature/*` | 단일 기능·페이지 단위 작업 (예: `feature/login-page`, `feature/chat-ui`) |
+| `feature/*` | 단일 기능·페이지 단위 작업 (예: `feature/login-page`, `feature/product-detail`) |
 
 #### 기본 워크플로우
 
@@ -228,4 +234,4 @@ git revert <시작커밋>..<끝커밋>
 
 ## 라이선스
 
-본 프로젝트는 교내 팀 프로젝트용입니다. 라이선스는 팀 내부 협의에 따릅니다.
+본 프로젝트는 [MIT License](./LICENSE) 하에 공개됩니다.
