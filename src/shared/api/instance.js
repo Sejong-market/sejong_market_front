@@ -58,17 +58,22 @@ async function parseResponseBody(response) {
 
 async function request(path, options = {}) {
   const { headers = {}, body, returnResponse = false, ...rest } = options
+  const isFormData = body instanceof FormData
 
   const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
+    headers: { ...headers },
     ...rest,
   }
 
+  if (isFormData) {
+    delete config.headers['Content-Type']
+  } else {
+    config.headers['Content-Type'] =
+      config.headers['Content-Type'] ?? 'application/json'
+  }
+
   if (body !== undefined) {
-    config.body = JSON.stringify(body)
+    config.body = isFormData ? body : JSON.stringify(body)
   }
 
   const token = resolveAccessToken()
