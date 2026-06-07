@@ -6,8 +6,11 @@ import SortToolbar from './components/SortToolbar';
 import ProductCard from '../ProductList/components/ProductCard';
 import ProfileEditModal from './components/ProfileEditModal';
 import { fetchMyProfile, fetchMyProducts, deleteMyAccount } from './api';
-import { MOCK_PROFILE, MOCK_PRODUCTS } from './mockData.js';
 import './MyPage.css';
+
+function isAuthError(err) {
+  return err?.status === 401 || err?.status === 403;
+}
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -16,10 +19,18 @@ export default function MyPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [sortOption, setSortOption] = useState('latest');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleAuthFailure = useCallback(() => {
+    localStorage.removeItem('accessToken');
+    alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+    navigate('/login');
+  }, [navigate]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
+    setError('');
 
     try {
       const [profileRes, productsRes] = await Promise.all([
@@ -32,14 +43,21 @@ export default function MyPage() {
 
       setProfile(profileData);
       setProducts(productsData?.content ?? []);
-    } catch {
-      console.warn('API 연동 실패로 더미 데이터를 불러옵니다.');
-      setProfile(MOCK_PROFILE);
-      setProducts(MOCK_PRODUCTS);
+    } catch (err) {
+      if (isAuthError(err)) {
+        handleAuthFailure();
+        return;
+      }
+
+      if (err?.message === 'Failed to fetch') {
+        setError('서버에 연결할 수 없습니다. 백엔드 실행 여부를 확인해주세요.');
+      } else {
+        setError('마이페이지 데이터를 불러오지 못했습니다.');
+      }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [handleAuthFailure]);
 
   useEffect(() => {
     loadData();
@@ -58,9 +76,8 @@ export default function MyPage() {
       navigate('/login');
     } catch (err) {
       console.error('회원 탈퇴 요청 실패:', err);
-      if (err?.status === 401 || err?.status === 403) {
-        alert('인증 자격이 유효하지 않습니다. 다시 로그인해 주세요.');
-        navigate('/login');
+      if (isAuthError(err)) {
+        handleAuthFailure();
       } else {
         alert('오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
       }
@@ -85,6 +102,12 @@ export default function MyPage() {
   return (
     <section className="mypage">
       <h1 className="mypage__title">마이페이지</h1>
+
+      {error && (
+        <div className="mypage__error" role="alert">
+          {error}
+        </div>
+      )}
 
       <ProfileSection
         profile={profile}
