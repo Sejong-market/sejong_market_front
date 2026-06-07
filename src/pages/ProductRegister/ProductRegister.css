@@ -1,0 +1,249 @@
+:root {
+  --sejong-color: #9A1C1F;
+  --sejong-hover: #7D1417;
+  --border-gray: #e0e0e0;
+  --text-dark: #333333;
+  --text-muted: #666666;
+}
+
+.product-register {
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem 1.25rem 2rem;
+  background-color: #f9fafb;
+  min-height: calc(100vh - 7.5rem);
+  box-sizing: border-box;
+}
+
+.product-register__container {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* 1. 상단 타이틀 및 모달 안내 버튼 배치 */
+.product-register__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 제목은 왼쪽, 안내 버튼은 우측 정렬 */
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+  border-bottom: 0.125rem solid var(--sejong-color);
+  padding-bottom: 0.75rem;
+}
+
+.product-register__notice-btn {
+  background: none;
+  border: none;
+  color: var(--sejong-color);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.product-register__notice-btn:hover {
+  text-decoration: underline;
+  background-color: #ffe6e5; /* 세종대 레드 계열의 연한 배경색 */
+}
+
+/* 2. 에러 멧세지 상단 바 */
+.product-register__error {
+  color: #ff3b30;
+  background-color: #ffe6e5;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ffcccc;
+}
+
+/* 3. 폼 필드 공통 */
+.product-register__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.product-register__field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.product-register__field input[type="text"],
+.product-register__field input[type="number"],
+.product-register__field textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 0.375rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.product-register__field input:focus,
+.product-register__field textarea:focus {
+  border-color: var(--sejong-color);
+}
+
+.product-register__field textarea {
+  height: 12.5rem;
+  resize: vertical;
+}
+
+/* 4. 단일 이미지 업로드 & 미리보기 관련 영역 (중요 변경) */
+.product-register__image-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.product-register__upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 6.25rem;
+  height: 6.25rem;
+  border: 1px dashed var(--border-gray);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  background-color: #ffffff;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.product-register__upload-btn:hover {
+  background-color: #f8f9fa;
+  border-color: var(--sejong-color);
+}
+
+.product-register__upload-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.product-register__upload-btn span:last-child {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* 단일 이미지 미리보기 구조 */
+.product-register__preview-wrap {
+  position: relative;
+  width: 6.25rem;
+  height: 6.25rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.product-register__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-register__remove-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.product-register__remove-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* 5. 에러 메시지 및 유효성 검사 스타일 */
+.product-register__field-error {
+  color: #ad282a;
+  font-size: 0.8rem;
+  margin: 0;
+  animation: fieldErrorFadeIn 0.2s ease-out forwards;
+}
+
+.product-register__input--error {
+  border-color: #ad282a !important;
+  background-color: #fffbfb;
+}
+
+@keyframes fieldErrorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 6. 하단 조작 버튼 */
+.product-register__buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.product-register__cancel-btn,
+.product-register__submit-btn {
+  flex: 1;
+  padding: 0.875rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.product-register__cancel-btn {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.product-register__cancel-btn:hover {
+  background-color: #dee2e6;
+}
+
+.product-register__submit-btn {
+  background-color: var(--sejong-color);
+  color: #ffffff;
+}
+
+.product-register__submit-btn:hover {
+  background-color: var(--sejong-hover);
+}
+
+.product-register__submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.product-register__field input[type="number"]::-webkit-outer-spin-button,
+.product-register__field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

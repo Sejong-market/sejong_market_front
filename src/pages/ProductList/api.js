@@ -1,7 +1,9 @@
 import { api } from '../../shared/api/instance'
 
 export function fetchProducts(params = {}) {
-  const query = new URLSearchParams(params).toString()
+  const defaultParams = { page: 0, size: 20, sort: 'createdAt,desc', ...params }
+  const query = new URLSearchParams(defaultParams).toString()
+  
   const path = query ? `/products?${query}` : '/products'
   return api.get(path)
 }

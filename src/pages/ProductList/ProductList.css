@@ -1,3 +1,4 @@
+/* 1. Product List Header & Search Styles (상단 헤더 및 검색창) */
 .product-list__header {
   display: flex;
   align-items: center;
@@ -11,10 +12,79 @@
   color: #111827;
 }
 
+/* 검색창 외곽 라인 */
+.product-list__search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 22rem; 
+  height: 2.2rem;
+  border: 1px solid #d1d5db; 
+  border-radius: 9999px; 
+  background-color: #fff;
+  padding: 0 0.5rem 0 1rem;
+  margin: 0 1rem;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease-in-out;
+}
+
+.product-list__search-form:focus-within {
+  border-color: #9A1C1F; 
+  box-shadow: 0 0 0 0.1px #9A1C1F;
+}
+
+.product-list__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.product-list__search-input {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 0.75rem;
+  color: #1f2937;
+  outline: none;
+}
+
+.product-list__search-input::placeholder {
+  color: #9ca3af;
+}
+
+/* 돋보기 버튼 */
+.product-list__search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: none;
+  border-radius: 50%;
+  background-color: #1f2937;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+
+.product-list__search-btn:hover {
+  background-color: #374151;
+}
+
+.product-list__search-btn svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* 상품 등록 버튼 */
 .product-list__register-btn {
   border: none;
   border-radius: 0.5rem;
-  background-color: #059669;
+  background-color: #9A1C1F;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
@@ -24,9 +94,10 @@
 }
 
 .product-list__register-btn:hover {
-  background-color: #047857;
+  background-color: #7A1315; 
 }
 
+/* 2. Product Grid Styles*/
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -34,17 +105,14 @@
 }
 
 @media (min-width: 640px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .product-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (min-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .product-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
+/* 로딩 및 빈 화면 공통 처리 */
 .product-grid__loading,
 .product-grid__empty {
   display: flex;
@@ -68,22 +136,25 @@
   color: #b91c1c;
 }
 
+/* 3. Product Card Styles */
 .product-card {
-  overflow: hidden;
-  border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  background-color: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent; 
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
 .product-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .product-card__image-wrap {
+  position: relative; 
   aspect-ratio: 1;
   background-color: #f3f4f6;
+  border-radius: 0.75rem;
+  overflow: hidden;
 }
 
 .product-card__image {
@@ -101,8 +172,11 @@
   color: #9ca3af;
 }
 
-.product-card__body {
-  padding: 0.75rem;
+.product-card__content {
+  padding: 0.5rem 0 0 0; 
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .product-card__title {
@@ -115,24 +189,24 @@
 }
 
 .product-card__price {
-  margin-top: 0.25rem;
   font-size: 1rem;
   font-weight: 700;
   color: #111827;
 }
 
+/* 4. Status Badge Styles */
 .product-card__status {
-  display: inline-block;
-  margin-top: 0.5rem;
-  border-radius: 9999px;
-  background-color: #ecfdf5;
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  color: #047857;
+  position: absolute;
+  top: 0.5rem;   
+  right: 0.5rem; 
+  z-index: 10;
+  border-radius: 0.375rem; 
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
-.product-card__id {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
+.status--selling { background-color: #e6f4ea; color: #137333; }
+.status--reserved { background-color: #fff0e2; color: #b06000; }
+.status--sold-out { background-color: #fce8e6; color: #c5221f; }
