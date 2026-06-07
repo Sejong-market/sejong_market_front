@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import CommentList from './components/CommentList'
 import CommentForm from './components/CommentForm'
 import { createProductComment, fetchProductDetail } from './api'
+import { resolveImageUrl } from '../../shared/utils/imageUrl'
 import './ProductDetail.css'
 
 const STATUS_LABEL = {
@@ -48,7 +49,7 @@ function normalizeProduct(product) {
     content: product.content,
     price: product.price,
     status: STATUS_LABEL[product.status] ?? product.status,
-    image: product.imageUrl,
+    image: resolveImageUrl(product.imageUrl),
     seller: product.seller?.nickname ?? '판매자',
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
