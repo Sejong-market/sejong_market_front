@@ -85,7 +85,7 @@ export default function useProductRegister() {
 
       // 2. image 파트: 선택된 파일이 있을 경우 파일 객체 추가
       if (imageFile) {
-        data.append('image', imageFile);
+        data.append('image', imageFile, imageFile.name);
       }
 
       await createProduct(data);
